@@ -1,25 +1,4 @@
-const editorItems = [
-    {
-        id: 1,
-        title: "Men",
-        image: "/images/editors-pick-men.jpg",
-    },
-    {
-        id: 2,
-        title: "Women",
-        image: "/images/editors-pick-women.jpg",
-    },
-    {
-        id: 3,
-        title: "Accessories",
-        image: "/images/editors-pick-accessories.jpg",
-    },
-    {
-        id: 4,
-        title: "Kids",
-        image: "/images/editors-pick-kids.jpg",
-    },
-];
+import editorsPick from "../../data/editorsPick";
 
 function EditorsPick() {
     return (
@@ -35,39 +14,23 @@ function EditorsPick() {
             </div>
 
             <div className="mt-10 flex w-full max-w-[1050px] flex-col gap-[30px] lg:h-[500px] lg:flex-row">
-                <EditorPickCard
-                    item={editorItems[0]}
-                    className="h-[500px] lg:h-full lg:w-[510px]"
-                    buttonClassName="left-[31px] bottom-[26px] w-[170px]"
-                />
+                <EditorPickCard item={editorsPick[0]} />
+                <EditorPickCard item={editorsPick[1]} />
 
-                <EditorPickCard
-                    item={editorItems[1]}
-                    className="h-[500px] lg:h-full lg:w-[240px]"
-                    buttonClassName="left-[21px] bottom-[26px] w-[136px]"
-                />
-
-                <div className="flex flex-col gap-4 lg:h-full lg:w-[240px] lg:gap-4">
-                    <EditorPickCard
-                        item={editorItems[2]}
-                        className="h-[242px] lg:h-[242px]"
-                        buttonClassName="left-[18px] bottom-[24px] w-[170px]"
-                    />
-
-                    <EditorPickCard
-                        item={editorItems[3]}
-                        className="h-[242px] lg:h-[242px]"
-                        buttonClassName="left-[18px] bottom-[24px] w-[120px]"
-                    />
+                <div className="flex flex-col gap-4 lg:h-full lg:w-[240px]">
+                    <EditorPickCard item={editorsPick[2]} />
+                    <EditorPickCard item={editorsPick[3]} />
                 </div>
             </div>
         </section>
     );
 }
 
-function EditorPickCard({ item, className, buttonClassName }) {
+function EditorPickCard({ item }) {
     return (
-        <div className={`relative flex overflow-hidden bg-white ${className}`}>
+        <div
+            className={`relative flex overflow-hidden bg-white ${item.cardClassName}`}
+        >
             <img
                 src={item.image}
                 alt={item.title}
@@ -75,7 +38,7 @@ function EditorPickCard({ item, className, buttonClassName }) {
             />
 
             <div
-                className={`absolute flex h-12 items-center justify-center bg-white ${buttonClassName}`}
+                className={`absolute flex h-12 items-center justify-center bg-white ${item.buttonClassName}`}
             >
                 <span className="text-sm font-bold uppercase leading-6 tracking-[0.2px] text-[#252B42]">
                     {item.title}
