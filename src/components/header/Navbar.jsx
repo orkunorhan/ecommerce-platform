@@ -15,13 +15,13 @@ function Navbar() {
 
     return (
         <div className="flex flex-col bg-white">
-            <div className="flex h-14.5 items-center justify-between px-9 lg:px-9">
+            <div className="flex h-[58px] items-center justify-between px-9 lg:px-9">
                 <div className="flex items-center gap-28">
                     <Link to="/" className="text-2xl font-bold leading-8 text-[#252B42]">
                         Bandage
                     </Link>
 
-                    <nav className="hidden items-center gap-3.75 lg:flex">
+                    <nav className="hidden items-center gap-[15px] lg:flex">
                         <Link to="/" className="text-sm font-bold leading-6 text-[#737373]">
                             Home
                         </Link>
@@ -51,20 +51,20 @@ function Navbar() {
                     </nav>
                 </div>
 
-                <div className="hidden items-center gap-7.5 text-[#23A6F0] lg:flex">
-                    <Link to="/login" className="flex items-center gap-1.25text-sm font-bold leading-6">
+                <div className="hidden items-center gap-[30px] text-[#23A6F0] lg:flex">
+                    <Link to="/login" className="flex items-center gap-[5px] text-sm font-bold leading-6">
                         <User size={16} strokeWidth={2.5} />
                         Login / Register
                     </Link>
 
                     <Search size={18} strokeWidth={2.5} />
 
-                    <div className="flex items-center gap-1.25">
+                    <div className="flex items-center gap-[5px]">
                         <ShoppingCart size={18} strokeWidth={2.5} />
                         <span className="text-xs leading-4">1</span>
                     </div>
 
-                    <div className="flex items-center gap-1.25">
+                    <div className="flex items-center gap-[5px]">
                         <Heart size={18} strokeWidth={2.5} />
                         <span className="text-xs leading-4">1</span>
                     </div>
