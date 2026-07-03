@@ -1,13 +1,18 @@
-import './App.css'
+import { BrowserRouter as Router } from "react-router-dom";
+import Header from "./layout/Header";
+import PageContent from "./layout/PageContent";
+import Footer from "./layout/Footer";
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-blue-600">
-        Tailwind is working 🚀
-      </h1>
-    </div>
+    <Router>
+      <div className="flex min-h-screen flex-col bg-white">
+        <Header />
+        <PageContent />
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
-export default App
+export default App;
