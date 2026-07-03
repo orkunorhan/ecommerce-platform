@@ -11,8 +11,8 @@ function MobileMenu({ isOpen }) {
                 Home
             </Link>
 
-            <Link to="/product" className="text-3xl font-normal text-[#737373]">
-                Product
+            <Link to="/shop" className="text-3xl font-normal text-[#737373]">
+                Shop
             </Link>
 
             <Link to="/pricing" className="text-3xl font-normal text-[#737373]">
