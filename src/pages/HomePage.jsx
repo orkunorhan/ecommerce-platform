@@ -3,6 +3,7 @@ import EditorsPick from "../components/home/EditorsPick";
 import BestsellerProducts from "../components/home/BestsellerProducts";
 import ProductPromoSlider from "../components/home/ProductPromoSlider";
 import ProductPromoSection from "../components/home/ProductPromoSection";
+import FeaturedPosts from "../components/home/FeaturedPosts";
 
 function HomePage() {
     return (
@@ -12,6 +13,7 @@ function HomePage() {
             <BestsellerProducts />
             <ProductPromoSlider />
             <ProductPromoSection />
+            <FeaturedPosts />
         </>
     );
 }
