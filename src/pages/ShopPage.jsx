@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Pagination from "../components/common/Pagination";
 import ProductGrid from "../components/shop/ProductGrid";
 import ProductToolbar from "../components/shop/ProductToolbar";
 import ShopHero from "../components/shop/ShopHero";
@@ -23,11 +24,14 @@ const sortOptions = [
     },
 ];
 
+const productsPerPage = 4;
+
 function ShopPage() {
     const [viewMode, setViewMode] = useState("grid");
     const [sortBy, setSortBy] = useState("popularity");
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const displayedProducts = useMemo(() => {
+    const sortedProducts = useMemo(() => {
         const productsCopy = [...shopProducts];
 
         switch (sortBy) {
@@ -35,32 +39,71 @@ function ShopPage() {
                 return productsCopy.sort(
                     (firstProduct, secondProduct) =>
                         Number(firstProduct.discountedPrice) -
-                        Number(secondProduct.discountedPrice),
+                        Number(secondProduct.discountedPrice)
                 );
 
             case "price-high-to-low":
                 return productsCopy.sort(
                     (firstProduct, secondProduct) =>
                         Number(secondProduct.discountedPrice) -
-                        Number(firstProduct.discountedPrice),
+                        Number(firstProduct.discountedPrice)
                 );
 
             case "name-a-to-z":
                 return productsCopy.sort((firstProduct, secondProduct) =>
-                    firstProduct.name.localeCompare(secondProduct.name),
+                    firstProduct.name.localeCompare(secondProduct.name)
                 );
 
             case "popularity":
             default:
                 return productsCopy.sort(
                     (firstProduct, secondProduct) =>
-                        secondProduct.popularity - firstProduct.popularity,
+                        secondProduct.popularity -
+                        firstProduct.popularity
                 );
         }
     }, [sortBy]);
 
-    const handleFilterClick = () => {
-        // Gerçek filtreleme ilerleyen Kanban görevinde eklenecek.
+    const totalPages = Math.ceil(
+        sortedProducts.length / productsPerPage
+    );
+
+    const displayedProducts = useMemo(() => {
+        const startIndex =
+            (currentPage - 1) * productsPerPage;
+
+        const endIndex =
+            startIndex + productsPerPage;
+
+        return sortedProducts.slice(
+            startIndex,
+            endIndex
+        );
+    }, [currentPage, sortedProducts]);
+
+    const handleSortChange = (value) => {
+        setSortBy(value);
+        setCurrentPage(1);
+    };
+
+    const handleViewChange = (value) => {
+        setViewMode(value);
+        setCurrentPage(1);
+    };
+
+    const handleFilterClick = () => { };
+
+    const handlePageChange = (page) => {
+        if (page < 1 || page > totalPages) {
+            return;
+        }
+
+        setCurrentPage(page);
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
     };
 
     return (
@@ -68,12 +111,12 @@ function ShopPage() {
             <ShopHero />
 
             <ProductToolbar
-                totalProducts={displayedProducts.length}
+                totalProducts={sortedProducts.length}
                 viewMode={viewMode}
                 sortBy={sortBy}
                 sortOptions={sortOptions}
-                onViewChange={setViewMode}
-                onSortChange={setSortBy}
+                onViewChange={handleViewChange}
+                onSortChange={handleSortChange}
                 onFilterClick={handleFilterClick}
             />
 
@@ -81,6 +124,16 @@ function ShopPage() {
                 products={displayedProducts}
                 viewMode={viewMode}
             />
+
+            {totalPages > 1 && (
+                <section className="flex w-full justify-center bg-white px-6 pb-20">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
+                </section>
+            )}
         </>
     );
 }
