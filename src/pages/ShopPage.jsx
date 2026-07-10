@@ -4,6 +4,7 @@ import ProductGrid from "../components/shop/ProductGrid";
 import ProductToolbar from "../components/shop/ProductToolbar";
 import ShopHero from "../components/shop/ShopHero";
 import shopProducts from "../data/shopProducts";
+import BrandLogos from "../components/common/BrandLogos";
 
 const sortOptions = [
     {
@@ -134,6 +135,8 @@ function ShopPage() {
                     />
                 </section>
             )}
+
+            <BrandLogos />
         </>
     );
 }
