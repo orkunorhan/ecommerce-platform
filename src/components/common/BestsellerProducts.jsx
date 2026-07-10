@@ -7,13 +7,13 @@ function BestsellerProducts({
     description = "Problems trying to resolve the conflict between",
     productsData = products,
     showColors = true,
-    className = "",
+    backgroundClassName = "bg-white",
 }) {
     const hasIntroContent = Boolean(eyebrow || description);
 
     return (
         <section
-            className={`flex flex-col items-center bg-white px-10 py-20 ${className}`}
+            className={`flex flex-col items-center px-10 py-20 ${backgroundClassName}`}
         >
             <div className="flex w-full max-w-[1050px] flex-col">
                 <div
@@ -43,7 +43,7 @@ function BestsellerProducts({
                 </div>
 
                 {!hasIntroContent && (
-                    <div className="mt-6 h-px w-full bg-[#ECECEC]" />
+                    <div className="mt-8 h-px w-full bg-[#ECECEC]" />
                 )}
 
                 <div className="mt-12 flex w-full flex-col items-center gap-y-[80px] md:flex-row md:flex-wrap md:justify-center md:gap-x-[30px]">
