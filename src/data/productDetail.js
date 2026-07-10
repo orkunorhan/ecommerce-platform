@@ -20,6 +20,29 @@ const productDetail = {
       alt: "Gray chair",
     },
   ],
+  detailContent: {
+    image: "/images/product-description.jpg",
+    imageAlt: "Modern interior with pink chair",
+    title: "the quick fox jumps over",
+    paragraphs: [
+      "Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met.",
+      "Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met.",
+      "Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met.",
+    ],
+    primaryFeatures: [
+      "the quick fox jumps over the lazy dog",
+      "the quick fox jumps over the lazy dog",
+      "the quick fox jumps over the lazy dog",
+      "the quick fox jumps over the lazy dog",
+    ],
+    secondaryFeatures: [
+      "the quick fox jumps over the lazy dog",
+      "the quick fox jumps over the lazy dog",
+      "the quick fox jumps over the lazy dog",
+    ],
+    additionalInformation:
+      "Additional product information will be provided in a later task.",
+  },
 };
 
 export default productDetail;
