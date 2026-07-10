@@ -1,14 +1,17 @@
+import ContactHero from "../components/contact/ContactHero";
+import contactHero from "../data/contactHero";
+
 function ContactPage() {
     return (
-        <section className="flex min-h-screen flex-col items-center justify-center px-6 py-20 text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.2px] text-[#737373]">
-                Contact Page
-            </p>
-
-            <h1 className="mt-4 text-[40px] font-bold leading-[50px] tracking-[0.2px] text-[#252B42]">
-                Contact Us
-            </h1>
-        </section>
+        <>
+            <ContactHero
+                title={contactHero.title}
+                description={contactHero.description}
+                actionText={contactHero.actionText}
+                actionHref={contactHero.actionHref}
+                backgroundImage={contactHero.backgroundImage}
+            />
+        </>
     );
 }
 
