@@ -1,6 +1,11 @@
+import { Link } from "react-router-dom";
+
 function ProductCard({ product }) {
     return (
-        <article className="flex w-[240px] flex-col items-center bg-white">
+        <Link
+            to={`/product/${product.id}`}
+            className="flex w-[240px] flex-col items-center bg-white"
+        >
             <img
                 src={product.image}
                 alt={product.name}
@@ -20,6 +25,7 @@ function ProductCard({ product }) {
                     <span className="text-base font-bold leading-6 tracking-[0.1px] text-[#BDBDBD]">
                         ${product.price}
                     </span>
+
                     <span className="text-base font-bold leading-6 tracking-[0.1px] text-[#23856D]">
                         ${product.discountedPrice}
                     </span>
@@ -35,7 +41,7 @@ function ProductCard({ product }) {
                     ))}
                 </div>
             </div>
-        </article>
+        </Link>
     );
 }
 
