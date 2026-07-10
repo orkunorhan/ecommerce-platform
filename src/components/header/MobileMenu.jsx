@@ -1,28 +1,104 @@
+import { Heart, Search, ShoppingCart, User } from "lucide-react";
 import { Link } from "react-router-dom";
 
-function MobileMenu({ isOpen }) {
+function MobileMenu({ isOpen, onNavigate }) {
     if (!isOpen) {
         return null;
     }
 
+    const handleNavigate = () => {
+        onNavigate?.();
+    };
+
     return (
-        <nav className="flex flex-col items-center gap-8 pb-20 pt-8 lg:hidden">
-            <Link to="/" className="text-3xl font-normal text-[#737373]">
-                Home
-            </Link>
+        <div className="flex flex-col items-center px-8 pb-16 pt-8 lg:hidden">
+            <nav className="flex flex-col items-center gap-8">
+                <Link
+                    to="/"
+                    onClick={handleNavigate}
+                    className="text-[30px] font-normal leading-[45px] text-[#252B42]"
+                >
+                    Home
+                </Link>
 
-            <Link to="/product" className="text-3xl font-normal text-[#737373]">
-                Product
-            </Link>
+                <Link
+                    to="/shop"
+                    onClick={handleNavigate}
+                    className="text-[30px] font-normal leading-[45px] text-[#737373]"
+                >
+                    Shop
+                </Link>
 
-            <Link to="/pricing" className="text-3xl font-normal text-[#737373]">
-                Pricing
-            </Link>
+                <Link
+                    to="/about"
+                    onClick={handleNavigate}
+                    className="text-[30px] font-normal leading-[45px] text-[#737373]"
+                >
+                    About
+                </Link>
 
-            <Link to="/contact" className="text-3xl font-normal text-[#737373]">
-                Contact
-            </Link>
-        </nav>
+                <Link
+                    to="/blog"
+                    onClick={handleNavigate}
+                    className="text-[30px] font-normal leading-[45px] text-[#737373]"
+                >
+                    Blog
+                </Link>
+
+                <Link
+                    to="/contact"
+                    onClick={handleNavigate}
+                    className="text-[30px] font-bold leading-[45px] text-[#737373]"
+                >
+                    Contact
+                </Link>
+
+                <Link
+                    to="/pages"
+                    onClick={handleNavigate}
+                    className="text-[30px] font-normal leading-[45px] text-[#737373]"
+                >
+                    Pages
+                </Link>
+            </nav>
+
+            <div className="mt-12 flex flex-col items-center gap-7 text-[#23A6F0]">
+                <Link
+                    to="/login"
+                    onClick={handleNavigate}
+                    className="flex items-center gap-2 text-[20px] font-bold leading-[30px]"
+                >
+                    <User size={24} strokeWidth={2} />
+                    Login / Register
+                </Link>
+
+                <button
+                    type="button"
+                    aria-label="Search"
+                    className="flex items-center justify-center"
+                >
+                    <Search size={26} strokeWidth={1.8} />
+                </button>
+
+                <button
+                    type="button"
+                    aria-label="Shopping cart"
+                    className="flex items-center gap-1"
+                >
+                    <ShoppingCart size={26} strokeWidth={1.8} />
+                    <span className="text-xs">1</span>
+                </button>
+
+                <button
+                    type="button"
+                    aria-label="Wishlist"
+                    className="flex items-center gap-1"
+                >
+                    <Heart size={26} strokeWidth={1.8} />
+                    <span className="text-xs">1</span>
+                </button>
+            </div>
+        </div>
     );
 }
 
