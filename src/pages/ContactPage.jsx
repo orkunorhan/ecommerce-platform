@@ -1,5 +1,6 @@
 import ContactHero from "../components/contact/ContactHero";
 import contactHero from "../data/contactHero";
+import ContactInfo from "../components/contact/ContactInfo";
 
 function ContactPage() {
     return (
@@ -11,6 +12,7 @@ function ContactPage() {
                 actionHref={contactHero.actionHref}
                 backgroundImage={contactHero.backgroundImage}
             />
+            <ContactInfo />
         </>
     );
 }
