@@ -3,6 +3,8 @@ import TeamHero from "../components/team/TeamHero";
 import teamGallery from "../data/teamGallery";
 import teamHero from "../data/teamHero";
 import TeamMembers from "../components/team/TeamMembers";
+import TrialSection from "../components/common/TrialSection";
+import trialSection from "../data/trialSection";
 
 function TeamPage() {
     return (
@@ -15,6 +17,11 @@ function TeamPage() {
             />
             <TeamGallery images={teamGallery} />
             <TeamMembers />
+            <TrialSection
+                title={trialSection.title}
+                description={trialSection.description}
+                buttonText={trialSection.buttonText}
+            />
         </>
     );
 }
