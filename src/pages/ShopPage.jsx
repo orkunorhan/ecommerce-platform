@@ -136,7 +136,7 @@ function ShopPage() {
                 </section>
             )}
 
-            <BrandLogos />
+            <BrandLogos background="gray" />
         </>
     );
 }
