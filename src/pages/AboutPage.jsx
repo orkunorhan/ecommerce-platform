@@ -1,7 +1,9 @@
 import AboutHero from "../components/about/AboutHero";
 import AboutProblemSection from "../components/about/AboutProblemSection";
+import AboutStatistics from "../components/about/AboutStatistics";
 import aboutHero from "../data/aboutHero";
 import aboutProblem from "../data/aboutProblem";
+import aboutStatistics from "../data/aboutStatistics";
 
 function AboutPage() {
     return (
@@ -19,6 +21,7 @@ function AboutPage() {
                 title={aboutProblem.title}
                 description={aboutProblem.description}
             />
+            <AboutStatistics statistics={aboutStatistics} />
         </>
     );
 }
