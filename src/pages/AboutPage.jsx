@@ -2,6 +2,7 @@ import AboutHero from "../components/about/AboutHero";
 import AboutProblemSection from "../components/about/AboutProblemSection";
 import AboutStatistics from "../components/about/AboutStatistics";
 import AboutVideoSection from "../components/about/AboutVideoSection";
+import TeamMembers from "../components/team/TeamMembers";
 import aboutHero from "../data/aboutHero";
 import aboutProblem from "../data/aboutProblem";
 import aboutStatistics from "../data/aboutStatistics";
@@ -29,6 +30,7 @@ function AboutPage() {
                 poster={aboutVideo.poster}
                 title={aboutVideo.title}
             />
+            <TeamMembers />
         </>
     );
 }
