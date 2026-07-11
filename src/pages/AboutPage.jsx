@@ -3,6 +3,7 @@ import AboutProblemSection from "../components/about/AboutProblemSection";
 import AboutStatistics from "../components/about/AboutStatistics";
 import AboutVideoSection from "../components/about/AboutVideoSection";
 import TeamMembers from "../components/team/TeamMembers";
+import BrandLogos from "../components/common/BrandLogos";
 import aboutHero from "../data/aboutHero";
 import aboutProblem from "../data/aboutProblem";
 import aboutStatistics from "../data/aboutStatistics";
@@ -31,6 +32,12 @@ function AboutPage() {
                 title={aboutVideo.title}
             />
             <TeamMembers />
+            <BrandLogos
+                showHeader
+                background="gray"
+                title="Big Companies Are Here"
+                description="Problems trying to resolve the conflict between the two major realms of Classical physics: Newtonian mechanics"
+            />
         </>
     );
 }
