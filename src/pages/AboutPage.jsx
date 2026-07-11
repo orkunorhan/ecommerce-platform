@@ -1,9 +1,11 @@
 import AboutHero from "../components/about/AboutHero";
 import AboutProblemSection from "../components/about/AboutProblemSection";
 import AboutStatistics from "../components/about/AboutStatistics";
+import AboutVideoSection from "../components/about/AboutVideoSection";
 import aboutHero from "../data/aboutHero";
 import aboutProblem from "../data/aboutProblem";
 import aboutStatistics from "../data/aboutStatistics";
+import aboutVideo from "../data/aboutVideo";
 
 function AboutPage() {
     return (
@@ -22,6 +24,11 @@ function AboutPage() {
                 description={aboutProblem.description}
             />
             <AboutStatistics statistics={aboutStatistics} />
+            <AboutVideoSection
+                video={aboutVideo.video}
+                poster={aboutVideo.poster}
+                title={aboutVideo.title}
+            />
         </>
     );
 }
