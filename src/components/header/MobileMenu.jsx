@@ -54,6 +54,14 @@ function MobileMenu({ isOpen, onNavigate }) {
                 </Link>
 
                 <Link
+                    to="/team"
+                    onClick={handleNavigate}
+                    className="text-[30px] font-normal leading-[45px] text-[#737373]"
+                >
+                    Team
+                </Link>
+
+                <Link
                     to="/pages"
                     onClick={handleNavigate}
                     className="text-[30px] font-normal leading-[45px] text-[#737373]"
