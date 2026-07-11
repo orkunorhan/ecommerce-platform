@@ -66,6 +66,13 @@ function Navbar() {
                         </Link>
 
                         <Link
+                            to="/team"
+                            className="text-sm font-bold leading-6 text-[#737373]"
+                        >
+                            Team
+                        </Link>
+
+                        <Link
                             to="/pages"
                             className="text-sm font-bold leading-6 text-[#737373]"
                         >

@@ -4,6 +4,7 @@ import NotFoundPage from "../pages/NotFoundPage";
 import ShopPage from "../pages/ShopPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import ContactPage from "../pages/ContactPage";
+import TeamPage from "../pages/TeamPage";
 
 function PageContent() {
     return (
@@ -20,6 +21,7 @@ function PageContent() {
                     exact
                     path="/contact"
                     component={ContactPage} />
+                <Route exact path="/team" component={TeamPage} />
                 <Route component={NotFoundPage} />
             </Switch>
         </main>
