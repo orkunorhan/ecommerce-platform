@@ -8,6 +8,7 @@ import {
     User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import MobileMenu from "./MobileMenu";
 
 function Navbar() {
@@ -16,6 +17,9 @@ function Navbar() {
     const closeMobileMenu = () => {
         setIsMenuOpen(false);
     };
+
+    const user = useSelector((state) => state.client.user);
+    const isLoggedIn = Boolean(user?.email);
 
     return (
         <div className="flex flex-col bg-white">
@@ -82,24 +86,31 @@ function Navbar() {
                 </div>
 
                 <div className="hidden items-center gap-[30px] text-[#23A6F0] lg:flex">
-                    <div className="flex items-center gap-[10px] text-sm font-bold leading-6">
-                        <Link
-                            to="/login"
-                            className="flex items-center gap-[5px] transition-colors hover:text-[#1B8ED1]"
-                        >
+                    {isLoggedIn ? (
+                        <div className="flex items-center gap-[6px] text-sm font-bold leading-6">
                             <User size={16} strokeWidth={2.5} />
-                            Login
-                        </Link>
+                            <span>{user.name}</span>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-[10px] text-sm font-bold leading-6">
+                            <Link
+                                to="/login"
+                                className="flex items-center gap-[5px] transition-colors hover:text-[#1B8ED1]"
+                            >
+                                <User size={16} strokeWidth={2.5} />
+                                Login
+                            </Link>
 
-                        <span className="text-[#23A6F0]">/</span>
+                            <span>/</span>
 
-                        <Link
-                            to="/signup"
-                            className="transition-colors hover:text-[#1B8ED1]"
-                        >
-                            Register
-                        </Link>
-                    </div>
+                            <Link
+                                to="/signup"
+                                className="transition-colors hover:text-[#1B8ED1]"
+                            >
+                                Register
+                            </Link>
+                        </div>
+                    )}
 
                     <button type="button" aria-label="Search">
                         <Search size={18} strokeWidth={2.5} />

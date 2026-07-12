@@ -1,7 +1,11 @@
 import { Heart, Search, ShoppingCart, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function MobileMenu({ isOpen, onNavigate }) {
+    const user = useSelector((state) => state.client.user);
+    const isLoggedIn = Boolean(user?.email);
+
     if (!isOpen) {
         return null;
     }
@@ -71,26 +75,33 @@ function MobileMenu({ isOpen, onNavigate }) {
             </nav>
 
             <div className="mt-12 flex flex-col items-center gap-7 text-[#23A6F0]">
-                <div className="flex items-center gap-5 text-[20px] font-bold leading-[30px]">
-                    <Link
-                        to="/login"
-                        onClick={handleNavigate}
-                        className="flex items-center gap-2 transition-colors hover:text-[#23A6F0]"
-                    >
+                {isLoggedIn ? (
+                    <div className="flex items-center gap-5 text-[20px] font-bold leading-[30px]">
                         <User size={24} strokeWidth={2} />
-                        Login
-                    </Link>
+                        <span>{user.name}</span>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-2 text-[20px] font-bold leading-[30px]">
+                        <Link
+                            to="/login"
+                            onClick={handleNavigate}
+                            className="flex items-center gap-2 transition-colors hover:text-[#23A6F0]"
+                        >
+                            <User size={24} strokeWidth={2} />
+                            Login
+                        </Link>
 
-                    <span>/</span>
+                        <span>/</span>
 
-                    <Link
-                        to="/signup"
-                        onClick={handleNavigate}
-                        className="transition-colors hover:text-[#23A6F0]"
-                    >
-                        Register
-                    </Link>
-                </div>
+                        <Link
+                            to="/signup"
+                            onClick={handleNavigate}
+                            className="transition-colors hover:text-[#23A6F0]"
+                        >
+                            Register
+                        </Link>
+                    </div>
+                )}
 
                 <button
                     type="button"
