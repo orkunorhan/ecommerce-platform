@@ -2,6 +2,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import Header from "./layout/Header";
 import PageContent from "./layout/PageContent";
 import Footer from "./layout/Footer";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -11,6 +13,12 @@ function App() {
         <PageContent />
         <Footer />
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        closeOnClick
+        pauseOnHover
+      />
     </Router>
   );
 }
