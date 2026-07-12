@@ -83,7 +83,7 @@ function Navbar() {
 
                 <div className="hidden items-center gap-[30px] text-[#23A6F0] lg:flex">
                     <Link
-                        to="/login"
+                        to="/signup"
                         className="flex items-center gap-[5px] text-sm font-bold leading-6"
                     >
                         <User size={16} strokeWidth={2.5} />

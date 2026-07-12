@@ -72,7 +72,7 @@ function MobileMenu({ isOpen, onNavigate }) {
 
             <div className="mt-12 flex flex-col items-center gap-7 text-[#23A6F0]">
                 <Link
-                    to="/login"
+                    to="/signup"
                     onClick={handleNavigate}
                     className="flex items-center gap-2 text-[20px] font-bold leading-[30px]"
                 >
