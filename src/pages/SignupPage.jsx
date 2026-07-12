@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { LoaderCircle } from "lucide-react";
 
@@ -8,14 +9,17 @@ import axiosInstance from "../api/axiosInstance";
 import FormField from "../components/signup/FormField";
 import RoleSelect from "../components/signup/RoleSelect";
 import StoreFields from "../components/signup/StoreFields";
+import { fetchRolesIfNeeded } from "../store/actions/clientActions";
 
 const PASSWORD_PATTERN =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 function SignupPage() {
     const history = useHistory();
+    const dispatch = useDispatch();
 
-    const [roles, setRoles] = useState([]);
+    const roles = useSelector((state) => state.client.roles);
+
     const [isRolesLoading, setIsRolesLoading] = useState(true);
     const [rolesError, setRolesError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +60,20 @@ function SignupPage() {
         name: "role_id",
     });
 
+    const sortedRoles = [...roles].sort(
+        (firstRole, secondRole) => {
+            if (firstRole.code === "customer") {
+                return -1;
+            }
+
+            if (secondRole.code === "customer") {
+                return 1;
+            }
+
+            return firstRole.id - secondRole.id;
+        },
+    );
+
     const selectedRole = roles.find(
         (role) => role.id === Number(selectedRoleId),
     );
@@ -77,32 +95,12 @@ function SignupPage() {
     useEffect(() => {
         let isMounted = true;
 
-        const fetchRoles = async () => {
+        const loadRoles = async () => {
             try {
                 setIsRolesLoading(true);
                 setRolesError("");
 
-                const response = await axiosInstance.get("/roles");
-
-                if (!isMounted) {
-                    return;
-                }
-
-                const sortedRoles = [...response.data].sort(
-                    (firstRole, secondRole) => {
-                        if (firstRole.code === "customer") {
-                            return -1;
-                        }
-
-                        if (secondRole.code === "customer") {
-                            return 1;
-                        }
-
-                        return firstRole.id - secondRole.id;
-                    },
-                );
-
-                setRoles(sortedRoles);
+                await dispatch(fetchRolesIfNeeded());
             } catch {
                 if (isMounted) {
                     setRolesError(
@@ -116,12 +114,12 @@ function SignupPage() {
             }
         };
 
-        fetchRoles();
+        loadRoles();
 
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [dispatch]);
 
     const redirectToPreviousPage = () => {
         if (history.length > 1) {
@@ -196,8 +194,6 @@ function SignupPage() {
                             {rolesError}
                         </div>
                     )}
-
-
 
                     <form
                         onSubmit={handleSubmit(onSubmit)}
@@ -274,7 +270,7 @@ function SignupPage() {
                         </div>
 
                         <RoleSelect
-                            roles={roles}
+                            roles={sortedRoles}
                             isLoading={isRolesLoading}
                             registration={register("role_id", {
                                 required: "Role is required.",
