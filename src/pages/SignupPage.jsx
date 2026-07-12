@@ -4,6 +4,7 @@ import { useForm, useWatch } from "react-hook-form";
 import axiosInstance from "../api/axiosInstance";
 import FormField from "../components/signup/FormField";
 import RoleSelect from "../components/signup/RoleSelect";
+import StoreFields from "../components/signup/StoreFields";
 
 const PASSWORD_PATTERN =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
@@ -18,10 +19,12 @@ function SignupPage() {
         handleSubmit,
         control,
         trigger,
+        unregister,
         formState: { errors, isValid },
     } = useForm({
         mode: "onBlur",
         reValidateMode: "onChange",
+        shouldUnregister: true,
         defaultValues: {
             name: "",
             email: "",
@@ -41,11 +44,28 @@ function SignupPage() {
         name: "passwordConfirm",
     });
 
+    const selectedRoleId = useWatch({
+        control,
+        name: "role_id",
+    });
+
+    const selectedRole = roles.find(
+        (role) => role.id === Number(selectedRoleId),
+    );
+
+    const isStoreRole = selectedRole?.code === "store";
+
     useEffect(() => {
         if (passwordConfirm) {
             trigger("passwordConfirm");
         }
     }, [password, passwordConfirm, trigger]);
+
+    useEffect(() => {
+        if (!isStoreRole) {
+            unregister("store");
+        }
+    }, [isStoreRole, unregister]);
 
     useEffect(() => {
         let isMounted = true;
@@ -208,6 +228,13 @@ function SignupPage() {
                             })}
                             error={errors.role_id}
                         />
+
+                        {isStoreRole && (
+                            <StoreFields
+                                register={register}
+                                errors={errors}
+                            />
+                        )}
 
                         <button
                             type="submit"
