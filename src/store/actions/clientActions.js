@@ -49,3 +49,29 @@ export const fetchRolesIfNeeded = () => {
     return rolesRequest;
   };
 };
+
+export const loginUser = ({ email, password, rememberMe }) => {
+  return async (dispatch) => {
+    const response = await axiosInstance.post("/login", {
+      email,
+      password,
+    });
+
+    const user = {
+      name: response.data.name,
+      email: response.data.email,
+      role_id: Number(response.data.role_id),
+      token: response.data.token,
+    };
+
+    dispatch(setUser(user));
+
+    if (rememberMe) {
+      localStorage.setItem("token", response.data.token);
+    } else {
+      localStorage.removeItem("token");
+    }
+
+    return user;
+  };
+};
