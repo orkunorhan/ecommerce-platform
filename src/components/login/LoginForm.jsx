@@ -1,19 +1,27 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+
+import { loginUser } from "../../store/actions/clientActions";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function LoginForm() {
+    const dispatch = useDispatch();
+    const history = useHistory();
+
     const [showPassword, setShowPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const {
         register,
         handleSubmit,
         formState: { errors, isValid },
     } = useForm({
-        mode: "onBlur",
-        reValidateMode: "onChange",
+        mode: "onChange",
         defaultValues: {
             email: "",
             password: "",
@@ -21,8 +29,38 @@ function LoginForm() {
         },
     });
 
-    const onSubmit = (formData) => {
-        console.log("Validated login form:", formData);
+    const redirectToPreviousPage = () => {
+        if (history.length > 1) {
+            history.goBack();
+            return;
+        }
+
+        history.push("/");
+    };
+
+    const onSubmit = async (formData) => {
+        setIsSubmitting(true);
+
+        try {
+            await dispatch(
+                loginUser({
+                    email: formData.email.trim(),
+                    password: formData.password,
+                    rememberMe: formData.rememberMe,
+                }),
+            );
+
+            toast.success("You have successfully logged in.");
+
+            redirectToPreviousPage();
+        } catch (error) {
+            const errorMessage =
+                error.response?.data?.message ||
+                "Login failed. Please check your credentials.";
+
+            toast.error(errorMessage);
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -48,12 +86,13 @@ function LoginForm() {
                         required: "Email is required.",
                         pattern: {
                             value: EMAIL_PATTERN,
-                            message: "Please enter a valid email address.",
+                            message:
+                                "Please enter a valid email address.",
                         },
                     })}
                     className={`h-12 rounded-[5px] border bg-[#F9F9F9] px-4 text-sm text-[#252B42] outline-none transition-colors placeholder:text-[#9A9A9A] ${errors.email
-                            ? "border-[#E74040] focus:border-[#E74040]"
-                            : "border-[#E6E6E6] focus:border-[#23A6F0]"
+                        ? "border-[#E74040] focus:border-[#E74040]"
+                        : "border-[#E6E6E6] focus:border-[#23A6F0]"
                         }`}
                 />
 
@@ -85,15 +124,17 @@ function LoginForm() {
                             required: "Password is required.",
                         })}
                         className={`h-12 w-full rounded-[5px] border bg-[#F9F9F9] px-4 pr-12 text-sm text-[#252B42] outline-none transition-colors placeholder:text-[#9A9A9A] ${errors.password
-                                ? "border-[#E74040] focus:border-[#E74040]"
-                                : "border-[#E6E6E6] focus:border-[#23A6F0]"
+                            ? "border-[#E74040] focus:border-[#E74040]"
+                            : "border-[#E6E6E6] focus:border-[#23A6F0]"
                             }`}
                     />
 
                     <button
                         type="button"
                         onClick={() =>
-                            setShowPassword((previous) => !previous)
+                            setShowPassword(
+                                (previousState) => !previousState,
+                            )
                         }
                         aria-label={
                             showPassword
@@ -132,10 +173,17 @@ function LoginForm() {
 
             <button
                 type="submit"
-                disabled={!isValid}
-                className="mt-1 flex h-[52px] w-full items-center justify-center rounded-[5px] bg-[#23A6F0] px-6 text-sm font-bold tracking-[0.2px] text-white transition-colors hover:bg-[#1B8ED1] disabled:cursor-not-allowed disabled:bg-[#BDBDBD]"
+                disabled={!isValid || isSubmitting}
+                className="mt-1 flex h-[52px] w-full items-center justify-center gap-2 rounded-[5px] bg-[#23A6F0] px-6 text-sm font-bold tracking-[0.2px] text-white transition-colors hover:bg-[#1B8ED1] disabled:cursor-not-allowed disabled:bg-[#BDBDBD]"
             >
-                Login
+                {isSubmitting && (
+                    <LoaderCircle
+                        aria-hidden="true"
+                        className="h-5 w-5 animate-spin"
+                    />
+                )}
+
+                {isSubmitting ? "Logging In..." : "Login"}
             </button>
         </form>
     );
