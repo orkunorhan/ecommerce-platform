@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "react-toastify";
+import { LoaderCircle } from "lucide-react";
+
 import axiosInstance from "../api/axiosInstance";
 import FormField from "../components/signup/FormField";
 import RoleSelect from "../components/signup/RoleSelect";
@@ -10,9 +13,13 @@ const PASSWORD_PATTERN =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 function SignupPage() {
+    const history = useHistory();
+
     const [roles, setRoles] = useState([]);
     const [isRolesLoading, setIsRolesLoading] = useState(true);
     const [rolesError, setRolesError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState("");
 
     const {
         register,
@@ -116,8 +123,55 @@ function SignupPage() {
         };
     }, []);
 
-    const onSubmit = (formData) => {
-        console.log("Validated signup form:", formData);
+    const redirectToPreviousPage = () => {
+        if (history.length > 1) {
+            history.goBack();
+            return;
+        }
+
+        history.push("/");
+    };
+
+    const onSubmit = async (formData) => {
+        setIsSubmitting(true);
+        setSubmitError("");
+
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            password: formData.password,
+            role_id: Number(formData.role_id),
+        };
+
+        if (isStoreRole) {
+            payload.store = {
+                name: formData.store.name.trim(),
+                phone: formData.store.phone,
+                tax_no: formData.store.tax_no,
+                bank_account: formData.store.bank_account,
+            };
+        }
+
+        try {
+            await axiosInstance.post("/signup", payload);
+
+            setIsSubmitting(false);
+
+            toast.warning(
+                "You need to click link in email to activate your account!",
+            );
+
+            redirectToPreviousPage();
+        } catch (error) {
+            const backendError =
+                error.response?.data?.err?.code === "SQLITE_CONSTRAINT"
+                    ? "This email address is already registered."
+                    : error.response?.data?.error ||
+                    "Registration failed. Please try again.";
+
+            setSubmitError(backendError);
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -143,6 +197,8 @@ function SignupPage() {
                         </div>
                     )}
 
+
+
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         noValidate
@@ -155,11 +211,9 @@ function SignupPage() {
                             autoComplete="name"
                             registration={register("name", {
                                 required: "Name is required.",
-                                minLength: {
-                                    value: 3,
-                                    message:
-                                        "Name must be at least 3 characters.",
-                                },
+                                validate: (value) =>
+                                    value.trim().length >= 3 ||
+                                    "Name must be at least 3 characters.",
                             })}
                             error={errors.name}
                         />
@@ -241,13 +295,32 @@ function SignupPage() {
                             disabled={
                                 !isValid ||
                                 isRolesLoading ||
-                                Boolean(rolesError)
+                                Boolean(rolesError) ||
+                                isSubmitting
                             }
-                            className="mt-1 flex h-[52px] w-full items-center justify-center rounded-[5px] bg-[#23A6F0] px-6 text-sm font-bold tracking-[0.2px] text-white transition-colors hover:bg-[#1B8ED1] disabled:cursor-not-allowed disabled:bg-[#BDBDBD]"
+                            className="mt-1 flex h-[52px] w-full items-center justify-center gap-2 rounded-[5px] bg-[#23A6F0] px-6 text-sm font-bold tracking-[0.2px] text-white transition-colors hover:bg-[#1B8ED1] disabled:cursor-not-allowed disabled:bg-[#BDBDBD]"
                         >
-                            Join Now
+                            {isSubmitting && (
+                                <LoaderCircle
+                                    aria-hidden="true"
+                                    className="h-5 w-5 animate-spin"
+                                />
+                            )}
+
+                            {isSubmitting
+                                ? "Creating Account..."
+                                : "Join Now"}
                         </button>
                     </form>
+
+                    {submitError && (
+                        <div
+                            role="alert"
+                            className="mt-3 mb-6 rounded-[5px] border border-[#E74040] bg-[#FFF1F1] px-4 py-3 text-sm leading-5 text-[#E74040]"
+                        >
+                            {submitError}
+                        </div>
+                    )}
 
                     <p className="mt-7 text-center text-sm italic text-[#737373]">
                         Already a member?{" "}

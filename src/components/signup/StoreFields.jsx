@@ -25,11 +25,9 @@ function StoreFields({ register, errors }) {
                     autoComplete="organization"
                     registration={register("store.name", {
                         required: "Store name is required.",
-                        minLength: {
-                            value: 3,
-                            message:
-                                "Store name must be at least 3 characters.",
-                        },
+                        validate: (value) =>
+                            value.trim().length >= 3 ||
+                            "Store name must be at least 3 characters.",
                     })}
                     error={errors.store?.name}
                 />
@@ -58,6 +56,8 @@ function StoreFields({ register, errors }) {
                         placeholder="TxxxxVxxxxxx"
                         registration={register("store.tax_no", {
                             required: "Store tax number is required.",
+                            setValueAs: (value) =>
+                                value.replace(/\s+/g, "").toUpperCase(),
                             pattern: {
                                 value: TAX_NUMBER_PATTERN,
                                 message:
