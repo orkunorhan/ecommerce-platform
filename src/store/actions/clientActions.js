@@ -1,4 +1,7 @@
+import axiosInstance from "../../api/axiosInstance";
 import { SET_LANGUAGE, SET_ROLES, SET_THEME, SET_USER } from "../actionTypes";
+
+let rolesRequest = null;
 
 export const setUser = (user) => ({
   type: SET_USER,
@@ -19,3 +22,30 @@ export const setLanguage = (language) => ({
   type: SET_LANGUAGE,
   payload: language,
 });
+
+export const fetchRolesIfNeeded = () => {
+  return async (dispatch, getState) => {
+    const { roles } = getState().client;
+
+    if (roles.length > 0) {
+      return roles;
+    }
+
+    if (rolesRequest) {
+      return rolesRequest;
+    }
+
+    rolesRequest = axiosInstance
+      .get("/roles")
+      .then((response) => {
+        dispatch(setRoles(response.data));
+
+        return response.data;
+      })
+      .finally(() => {
+        rolesRequest = null;
+      });
+
+    return rolesRequest;
+  };
+};
