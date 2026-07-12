@@ -1,6 +1,7 @@
 import { Heart, Search, ShoppingCart, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import GravatarAvatar from "../common/GravatarAvatar";
 
 function MobileMenu({ isOpen, onNavigate }) {
     const user = useSelector((state) => state.client.user);
@@ -76,8 +77,13 @@ function MobileMenu({ isOpen, onNavigate }) {
 
             <div className="mt-12 flex flex-col items-center gap-7 text-[#23A6F0]">
                 {isLoggedIn ? (
-                    <div className="flex items-center gap-5 text-[20px] font-bold leading-[30px]">
-                        <User size={24} strokeWidth={2} />
+                    <div className="flex items-center gap-3 text-[20px] font-bold leading-[30px]">
+                        <GravatarAvatar
+                            email={user.email}
+                            name={user.name}
+                            size={36}
+                        />
+
                         <span>{user.name}</span>
                     </div>
                 ) : (

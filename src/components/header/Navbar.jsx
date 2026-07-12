@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import MobileMenu from "./MobileMenu";
+import GravatarAvatar from "../common/GravatarAvatar";
 
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -87,8 +88,13 @@ function Navbar() {
 
                 <div className="hidden items-center gap-[30px] text-[#23A6F0] lg:flex">
                     {isLoggedIn ? (
-                        <div className="flex items-center gap-[6px] text-sm font-bold leading-6">
-                            <User size={16} strokeWidth={2.5} />
+                        <div className="flex items-center gap-2 text-sm font-bold leading-6">
+                            <GravatarAvatar
+                                email={user.email}
+                                name={user.name}
+                                size={28}
+                            />
+
                             <span>{user.name}</span>
                         </div>
                     ) : (
