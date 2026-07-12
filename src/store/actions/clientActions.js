@@ -1,4 +1,7 @@
-import axiosInstance from "../../api/axiosInstance";
+import axiosInstance, {
+  clearAuthorizationToken,
+  setAuthorizationToken,
+} from "../../api/axiosInstance";
 import { SET_LANGUAGE, SET_ROLES, SET_THEME, SET_USER } from "../actionTypes";
 
 let rolesRequest = null;
@@ -65,6 +68,7 @@ export const loginUser = ({ email, password, rememberMe }) => {
     };
 
     dispatch(setUser(user));
+    setAuthorizationToken(response.data.token);
 
     if (rememberMe) {
       localStorage.setItem("token", response.data.token);
@@ -73,5 +77,42 @@ export const loginUser = ({ email, password, rememberMe }) => {
     }
 
     return user;
+  };
+};
+
+export const verifyToken = () => {
+  return async (dispatch) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      clearAuthorizationToken();
+      return null;
+    }
+
+    try {
+      setAuthorizationToken(token);
+
+      const response = await axiosInstance.get("/verify");
+
+      const user = {
+        name: response.data.name,
+        email: response.data.email,
+        role_id: Number(response.data.role_id),
+        token: response.data.token,
+      };
+
+      dispatch(setUser(user));
+
+      localStorage.setItem("token", response.data.token);
+      setAuthorizationToken(response.data.token);
+
+      return user;
+    } catch (error) {
+      localStorage.removeItem("token");
+      clearAuthorizationToken();
+      dispatch(setUser({}));
+
+      throw error;
+    }
   };
 };

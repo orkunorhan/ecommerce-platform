@@ -37,7 +37,7 @@ function GravatarAvatar({
 
                 if (isMounted) {
                     setAvatarUrl(
-                        `https://www.gravatar.com/avatar/${hash}?s=${size}&d=404&r=g`,
+                        `https://www.gravatar.com/avatar/${hash}?s=${size}&d=identicon&r=g`,
                     );
                 }
             } catch {

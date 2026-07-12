@@ -7,4 +7,12 @@ const axiosInstance = axios.create({
   },
 });
 
+export const setAuthorizationToken = (token) => {
+  axiosInstance.defaults.headers.common.Authorization = token;
+};
+
+export const clearAuthorizationToken = () => {
+  delete axiosInstance.defaults.headers.common.Authorization;
+};
+
 export default axiosInstance;
