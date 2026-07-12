@@ -1,8 +1,7 @@
 import { combineReducers } from "redux";
-
-const clientReducer = (state = {}) => state;
-const productReducer = (state = {}) => state;
-const shoppingCartReducer = (state = {}) => state;
+import clientReducer from "./clientReducer";
+import productReducer from "./productReducer";
+import shoppingCartReducer from "./shoppingCartReducer";
 
 const rootReducer = combineReducers({
   client: clientReducer,
