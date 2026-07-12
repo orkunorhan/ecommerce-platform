@@ -82,13 +82,24 @@ function Navbar() {
                 </div>
 
                 <div className="hidden items-center gap-[30px] text-[#23A6F0] lg:flex">
-                    <Link
-                        to="/signup"
-                        className="flex items-center gap-[5px] text-sm font-bold leading-6"
-                    >
-                        <User size={16} strokeWidth={2.5} />
-                        Login / Register
-                    </Link>
+                    <div className="flex items-center gap-[10px] text-sm font-bold leading-6">
+                        <Link
+                            to="/login"
+                            className="flex items-center gap-[5px] transition-colors hover:text-[#1B8ED1]"
+                        >
+                            <User size={16} strokeWidth={2.5} />
+                            Login
+                        </Link>
+
+                        <span className="text-[#23A6F0]">/</span>
+
+                        <Link
+                            to="/signup"
+                            className="transition-colors hover:text-[#1B8ED1]"
+                        >
+                            Register
+                        </Link>
+                    </div>
 
                     <button type="button" aria-label="Search">
                         <Search size={18} strokeWidth={2.5} />
