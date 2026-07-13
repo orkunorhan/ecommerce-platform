@@ -8,11 +8,14 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { verifyToken } from "./store/actions/clientActions";
+import { fetchCategoriesIfNeeded } from "./store/actions/productActions";
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(fetchCategoriesIfNeeded());
+
     dispatch(verifyToken()).catch(() => {
       // Invalid token is already cleared inside the thunk.
     });

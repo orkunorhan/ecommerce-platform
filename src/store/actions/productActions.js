@@ -1,3 +1,4 @@
+import axiosInstance from "../../api/axiosInstance";
 import {
   SET_CATEGORIES,
   SET_FETCH_STATE,
@@ -42,3 +43,32 @@ export const setFilter = (filter) => ({
   type: SET_FILTER,
   payload: filter,
 });
+
+let categoriesRequest = null;
+
+export const fetchCategoriesIfNeeded = () => {
+  return async (dispatch, getState) => {
+    const { categories } = getState().product;
+
+    if (categories.length > 0) {
+      return categories;
+    }
+
+    if (categoriesRequest) {
+      return categoriesRequest;
+    }
+
+    categoriesRequest = axiosInstance
+      .get("/categories")
+      .then((response) => {
+        dispatch(setCategories(response.data));
+
+        return response.data;
+      })
+      .finally(() => {
+        categoriesRequest = null;
+      });
+
+    return categoriesRequest;
+  };
+};

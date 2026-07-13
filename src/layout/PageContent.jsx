@@ -17,6 +17,11 @@ function PageContent() {
                 <Route exact path="/shop" component={ShopPage} />
                 <Route
                     exact
+                    path="/shop/:gender/:categoryName/:categoryId"
+                    component={ShopPage}
+                />
+                <Route
+                    exact
                     path="/product/:productId"
                     component={ProductDetailPage}
                 />
