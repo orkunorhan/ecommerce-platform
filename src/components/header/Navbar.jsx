@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-    ChevronDown,
     Heart,
     Menu,
     Search,
@@ -11,6 +10,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import MobileMenu from "./MobileMenu";
 import GravatarAvatar from "../common/GravatarAvatar";
+import ShopDropdown from "../navigation/ShopDropdown";
 
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,13 +41,7 @@ function Navbar() {
                             Home
                         </Link>
 
-                        <Link
-                            to="/shop"
-                            className="flex items-center gap-1 text-sm font-bold leading-6 text-[#252B42]"
-                        >
-                            Shop
-                            <ChevronDown size={14} strokeWidth={2.5} />
-                        </Link>
+                        <ShopDropdown />
 
                         <Link
                             to="/about"
