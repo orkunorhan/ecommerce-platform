@@ -1,23 +1,40 @@
-import { Heart, Search, ShoppingCart, User } from "lucide-react";
+import { ChevronDown, Heart, Search, ShoppingCart, User, } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import GravatarAvatar from "../common/GravatarAvatar";
+import { getCategoryPath } from "../../utils/categoryUtils";
 
 function MobileMenu({ isOpen, onNavigate }) {
+    const [isShopOpen, setIsShopOpen] = useState(false);
+
     const user = useSelector((state) => state.client.user);
+    const categories = useSelector(
+        (state) => state.product.categories,
+    );
+
     const isLoggedIn = Boolean(user?.email);
+
+    const womenCategories = categories.filter(
+        (category) => category.gender === "k",
+    );
+
+    const menCategories = categories.filter(
+        (category) => category.gender === "e",
+    );
+
+    const handleNavigate = () => {
+        setIsShopOpen(false);
+        onNavigate?.();
+    };
 
     if (!isOpen) {
         return null;
     }
 
-    const handleNavigate = () => {
-        onNavigate?.();
-    };
-
     return (
         <div className="flex flex-col items-center px-8 pb-16 pt-8 lg:hidden">
-            <nav className="flex flex-col items-center gap-8">
+            <nav className="flex w-full max-w-[320px] flex-col items-center gap-8">
                 <Link
                     to="/"
                     onClick={handleNavigate}
@@ -26,13 +43,58 @@ function MobileMenu({ isOpen, onNavigate }) {
                     Home
                 </Link>
 
-                <Link
-                    to="/shop"
-                    onClick={handleNavigate}
-                    className="text-[30px] font-normal leading-[45px] text-[#737373]"
-                >
-                    Shop
-                </Link>
+                <div className="flex w-full flex-col items-center">
+                    <div className="flex items-center gap-3">
+                        <Link
+                            to="/shop"
+                            onClick={handleNavigate}
+                            className="text-[30px] font-normal leading-[45px] text-[#737373]"
+                        >
+                            Shop
+                        </Link>
+
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setIsShopOpen(
+                                    (currentValue) => !currentValue,
+                                )
+                            }
+                            aria-label={
+                                isShopOpen
+                                    ? "Close shop categories"
+                                    : "Open shop categories"
+                            }
+                            aria-expanded={isShopOpen}
+                            className="flex items-center justify-center text-[#737373]"
+                        >
+                            <ChevronDown
+                                size={22}
+                                strokeWidth={2}
+                                className={`transition-transform duration-200 ${isShopOpen
+                                    ? "rotate-180"
+                                    : ""
+                                    }`}
+                            />
+                        </button>
+                    </div>
+
+                    {isShopOpen && (
+                        <div className="mt-6 grid w-full grid-cols-2 gap-8 border-t border-[#E6E6E6] pt-6">
+                            <CategoryColumn
+                                title="Kadın"
+                                categories={womenCategories}
+                                onNavigate={handleNavigate}
+                            />
+
+                            <CategoryColumn
+                                title="Erkek"
+                                categories={menCategories}
+                                onNavigate={handleNavigate}
+                            />
+                        </div>
+                    )}
+                </div>
 
                 <Link
                     to="/about"
@@ -53,7 +115,7 @@ function MobileMenu({ isOpen, onNavigate }) {
                 <Link
                     to="/contact"
                     onClick={handleNavigate}
-                    className="text-[30px] font-bold leading-[45px] text-[#737373]"
+                    className="text-[30px] font-normal leading-[45px] text-[#737373]"
                 >
                     Contact
                 </Link>
@@ -91,7 +153,7 @@ function MobileMenu({ isOpen, onNavigate }) {
                         <Link
                             to="/login"
                             onClick={handleNavigate}
-                            className="flex items-center gap-2 transition-colors hover:text-[#23A6F0]"
+                            className="flex items-center gap-2 transition-colors hover:text-[#1B8ED1]"
                         >
                             <User size={24} strokeWidth={2} />
                             Login
@@ -102,7 +164,7 @@ function MobileMenu({ isOpen, onNavigate }) {
                         <Link
                             to="/signup"
                             onClick={handleNavigate}
-                            className="transition-colors hover:text-[#23A6F0]"
+                            className="transition-colors hover:text-[#1B8ED1]"
                         >
                             Register
                         </Link>
@@ -134,6 +196,33 @@ function MobileMenu({ isOpen, onNavigate }) {
                     <Heart size={26} strokeWidth={1.8} />
                     <span className="text-xs">1</span>
                 </button>
+            </div>
+        </div>
+    );
+}
+
+function CategoryColumn({
+    title,
+    categories,
+    onNavigate,
+}) {
+    return (
+        <div className="flex flex-col items-center">
+            <h3 className="mb-4 text-base font-bold leading-6 text-[#252B42]">
+                {title}
+            </h3>
+
+            <div className="flex flex-col items-center gap-3">
+                {categories.map((category) => (
+                    <Link
+                        key={category.id}
+                        to={getCategoryPath(category)}
+                        onClick={onNavigate}
+                        className="text-sm font-semibold leading-5 text-[#737373] transition-colors hover:text-[#23A6F0]"
+                    >
+                        {category.title}
+                    </Link>
+                ))}
             </div>
         </div>
     );
