@@ -1,11 +1,11 @@
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import ShopCategoryCard from "../common/ShopCategoryCard";
-import shopCategories from "../../data/shopCategories";
+//import ShopCategoryCard from "../common/ShopCategoryCard";
+//import shopCategories from "../../data/shopCategories";
 
 function ShopHero() {
     return (
-        <section className="flex flex-col bg-[#FAFAFA] px-10 py-10">
+        <section className="flex flex-col bg-[#FAFAFA] px-10 pt-10">
             <div className="mx-auto flex w-full max-w-[1088px] flex-col items-center gap-[30px] lg:flex-row lg:items-center lg:justify-between">
                 <h1 className="text-[40px] font-bold leading-[50px] tracking-[0.2px] text-[#252B42]">
                     Shop
@@ -27,11 +27,11 @@ function ShopHero() {
                 </div>
             </div>
 
-            <div className="mx-auto mt-10 flex w-full max-w-[1088px] flex-col gap-[15px] lg:flex-row">
+            {/* <div className="mx-auto mt-10 flex w-full max-w-[1088px] flex-col gap-[15px] lg:flex-row">
                 {shopCategories.map((category) => (
                     <ShopCategoryCard key={category.id} category={category} />
                 ))}
-            </div>
+            </div> */}
         </section>
     );
 }

@@ -5,6 +5,7 @@ import ProductToolbar from "../components/shop/ProductToolbar";
 import ShopHero from "../components/shop/ShopHero";
 import shopProducts from "../data/shopProducts";
 import BrandLogos from "../components/common/BrandLogos";
+import TopCategories from "../components/shop/TopCategories";
 
 const sortOptions = [
     {
@@ -110,6 +111,7 @@ function ShopPage() {
     return (
         <>
             <ShopHero />
+            <TopCategories />
 
             <ProductToolbar
                 totalProducts={sortedProducts.length}
