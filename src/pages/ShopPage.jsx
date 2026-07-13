@@ -1,9 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { LoaderCircle } from "lucide-react";
 import Pagination from "../components/common/Pagination";
 import ProductGrid from "../components/shop/ProductGrid";
 import ProductToolbar from "../components/shop/ProductToolbar";
 import ShopHero from "../components/shop/ShopHero";
-import shopProducts from "../data/shopProducts";
+//import shopProducts from "../data/shopProducts";
+import { fetchProducts } from "../store/actions/productActions";
 import BrandLogos from "../components/common/BrandLogos";
 import TopCategories from "../components/shop/TopCategories";
 
@@ -29,45 +32,69 @@ const sortOptions = [
 const productsPerPage = 4;
 
 function ShopPage() {
+    const dispatch = useDispatch();
+
+    const products = useSelector(
+        (state) => state.product.productList,
+    );
+
+    const total = useSelector(
+        (state) => state.product.total,
+    );
+
+    const fetchState = useSelector(
+        (state) => state.product.fetchState,
+    );
+
     const [viewMode, setViewMode] = useState("grid");
     const [sortBy, setSortBy] = useState("popularity");
     const [currentPage, setCurrentPage] = useState(1);
 
+    useEffect(() => {
+        dispatch(fetchProducts()).catch(() => {
+            // Failed state is handled through Redux.
+        });
+    }, [dispatch]);
+
     const sortedProducts = useMemo(() => {
-        const productsCopy = [...shopProducts];
+        const productsCopy = [...products];
 
         switch (sortBy) {
             case "price-low-to-high":
                 return productsCopy.sort(
                     (firstProduct, secondProduct) =>
-                        Number(firstProduct.discountedPrice) -
-                        Number(secondProduct.discountedPrice)
+                        Number(firstProduct.price) -
+                        Number(secondProduct.price),
                 );
 
             case "price-high-to-low":
                 return productsCopy.sort(
                     (firstProduct, secondProduct) =>
-                        Number(secondProduct.discountedPrice) -
-                        Number(firstProduct.discountedPrice)
+                        Number(secondProduct.price) -
+                        Number(firstProduct.price),
                 );
 
             case "name-a-to-z":
-                return productsCopy.sort((firstProduct, secondProduct) =>
-                    firstProduct.name.localeCompare(secondProduct.name)
+                return productsCopy.sort(
+                    (firstProduct, secondProduct) =>
+                        firstProduct.name.localeCompare(
+                            secondProduct.name,
+                            "tr",
+                        ),
                 );
 
             case "popularity":
             default:
                 return productsCopy.sort(
                     (firstProduct, secondProduct) =>
-                        secondProduct.popularity -
-                        firstProduct.popularity
+                        secondProduct.sell_count -
+                        firstProduct.sell_count,
                 );
         }
-    }, [sortBy]);
+    }, [products, sortBy]);
 
     const totalPages = Math.ceil(
-        sortedProducts.length / productsPerPage
+        sortedProducts.length / productsPerPage,
     );
 
     const displayedProducts = useMemo(() => {
@@ -79,7 +106,7 @@ function ShopPage() {
 
         return sortedProducts.slice(
             startIndex,
-            endIndex
+            endIndex,
         );
     }, [currentPage, sortedProducts]);
 
@@ -114,7 +141,8 @@ function ShopPage() {
             <TopCategories />
 
             <ProductToolbar
-                totalProducts={sortedProducts.length}
+                showingCount={products.length}
+                totalProducts={total}
                 viewMode={viewMode}
                 sortBy={sortBy}
                 sortOptions={sortOptions}
@@ -123,19 +151,52 @@ function ShopPage() {
                 onFilterClick={handleFilterClick}
             />
 
-            <ProductGrid
-                products={displayedProducts}
-                viewMode={viewMode}
-            />
-
-            {totalPages > 1 && (
-                <section className="flex w-full justify-center bg-white px-6 pb-20">
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
+            {fetchState === "FETCHING" && (
+                <section className="flex min-h-[320px] items-center justify-center bg-white">
+                    <LoaderCircle
+                        aria-hidden="true"
+                        className="h-10 w-10 animate-spin text-[#23A6F0]"
                     />
                 </section>
+            )}
+
+            {fetchState === "FAILED" && (
+                <section
+                    role="alert"
+                    className="flex min-h-[260px] items-center justify-center bg-white px-6 text-center"
+                >
+                    <p className="text-base font-semibold text-[#E74040]">
+                        Products could not be loaded. Please try again.
+                    </p>
+                </section>
+            )}
+
+            {fetchState === "FETCHING" && products.length === 0 && (
+                <section className="flex min-h-[320px] items-center justify-center bg-white">
+                    <LoaderCircle
+                        aria-hidden="true"
+                        className="h-10 w-10 animate-spin text-[#23A6F0]"
+                    />
+                </section>
+            )}
+
+            {products.length > 0 && (
+                <>
+                    <ProductGrid
+                        products={displayedProducts}
+                        viewMode={viewMode}
+                    />
+
+                    {totalPages > 1 && (
+                        <section className="flex w-full justify-center bg-white px-6 pb-20">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
+                        </section>
+                    )}
+                </>
             )}
 
             <BrandLogos background="gray" />

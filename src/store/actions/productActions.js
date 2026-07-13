@@ -72,3 +72,71 @@ export const fetchCategoriesIfNeeded = () => {
     return categoriesRequest;
   };
 };
+
+let productsRequest = null;
+let activeProductsRequestKey = null;
+let lastFetchedProductsKey = null;
+
+export const fetchProducts = () => {
+  return async (dispatch, getState) => {
+    const { productList, limit, offset, filter } = getState().product;
+
+    const normalizedFilter = filter.trim();
+
+    const requestKey = JSON.stringify({
+      limit,
+      offset,
+      filter: normalizedFilter,
+    });
+
+    if (productList.length > 0 && lastFetchedProductsKey === requestKey) {
+      return {
+        products: productList,
+        total: getState().product.total,
+      };
+    }
+
+    if (productsRequest && activeProductsRequestKey === requestKey) {
+      return productsRequest;
+    }
+
+    const params = {
+      limit,
+      offset,
+    };
+
+    if (normalizedFilter) {
+      params.filter = normalizedFilter;
+    }
+
+    dispatch(setFetchState("FETCHING"));
+
+    activeProductsRequestKey = requestKey;
+
+    productsRequest = axiosInstance
+      .get("/products", {
+        params,
+      })
+      .then((response) => {
+        dispatch(setProductList(response.data.products));
+
+        dispatch(setTotal(response.data.total));
+        dispatch(setFetchState("FETCHED"));
+
+        lastFetchedProductsKey = requestKey;
+
+        return response.data;
+      })
+      .catch((error) => {
+        dispatch(setFetchState("FAILED"));
+
+        throw error;
+      })
+      .finally(() => {
+        productsRequest = null;
+        activeProductsRequestKey = null;
+      });
+
+    return productsRequest;
+  };
+};
