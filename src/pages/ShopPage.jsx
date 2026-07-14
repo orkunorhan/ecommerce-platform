@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { LoaderCircle } from "lucide-react";
@@ -74,8 +74,19 @@ function ShopPage() {
     const [filterInput, setFilterInput] = useState(filter);
     const [selectedSort, setSelectedSort] = useState(sort);
     const [viewMode, setViewMode] = useState("grid");
-    const currentPage =
-        Math.floor(offset / limit) + 1;
+
+    const productsSectionRef = useRef(null);
+
+    const currentPage = Math.floor(offset / limit) + 1;
+    const totalPages = Math.ceil(total / limit);
+
+    const firstVisibleProduct =
+        products.length > 0 ? offset + 1 : 0;
+
+    const lastVisibleProduct =
+        products.length > 0
+            ? Math.min(offset + products.length, total)
+            : 0;
 
     useEffect(() => {
         dispatch(fetchProducts(categoryId)).catch(() => {
@@ -90,7 +101,7 @@ function ShopPage() {
         dispatch,
     ]);
 
-    const totalPages = Math.ceil(total / limit);
+
 
     const handleSortChange = (value) => {
         setSelectedSort(value);
@@ -111,17 +122,19 @@ function ShopPage() {
     };
 
     const handlePageChange = (page) => {
-        if (page < 1 || page > totalPages) {
+        if (
+            page < 1 ||
+            page > totalPages ||
+            page === currentPage
+        ) {
             return;
         }
 
-        const nextOffset = (page - 1) * limit;
+        dispatch(setOffset((page - 1) * limit));
 
-        dispatch(setOffset(nextOffset));
-
-        window.scrollTo({
-            top: 0,
+        productsSectionRef.current?.scrollIntoView({
             behavior: "smooth",
+            block: "start",
         });
     };
 
@@ -130,18 +143,24 @@ function ShopPage() {
             <ShopHero />
             <TopCategories />
 
-            <ProductToolbar
-                showingCount={products.length}
-                totalProducts={total}
-                viewMode={viewMode}
-                sortBy={selectedSort}
-                sortOptions={sortOptions}
-                filterInput={filterInput}
-                onViewChange={handleViewChange}
-                onSortChange={handleSortChange}
-                onFilterInputChange={handleFilterInputChange}
-                onFilterClick={handleFilterClick}
-            />
+            <div
+                ref={productsSectionRef}
+                className="scroll-mt-6"
+            >
+                <ProductToolbar
+                    firstVisibleProduct={firstVisibleProduct}
+                    lastVisibleProduct={lastVisibleProduct}
+                    totalProducts={total}
+                    viewMode={viewMode}
+                    sortBy={selectedSort}
+                    sortOptions={sortOptions}
+                    filterInput={filterInput}
+                    onViewChange={handleViewChange}
+                    onSortChange={handleSortChange}
+                    onFilterInputChange={handleFilterInputChange}
+                    onFilterClick={handleFilterClick}
+                />
+            </div>
 
             {fetchState === "FETCHING" &&
                 products.length === 0 && (

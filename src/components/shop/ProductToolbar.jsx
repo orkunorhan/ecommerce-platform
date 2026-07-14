@@ -1,7 +1,8 @@
 import { ChevronDown, Grid2X2, List } from "lucide-react";
 
 function ProductToolbar({
-    showingCount,
+    firstVisibleProduct,
+    lastVisibleProduct,
     totalProducts,
     viewMode,
     sortBy,
@@ -16,7 +17,8 @@ function ProductToolbar({
         <section className="flex w-full justify-center bg-white px-6 py-12">
             <div className="flex w-full max-w-[1050px] flex-col items-center gap-8 lg:flex-row lg:justify-between">
                 <p className="text-sm font-bold leading-6 tracking-[0.2px] text-[#737373]">
-                    Showing {showingCount} of {totalProducts} results
+                    Showing {firstVisibleProduct} – {lastVisibleProduct} of{" "}
+                    {totalProducts} results
                 </p>
 
                 <div className="flex flex-col items-center gap-6 lg:flex-row">
