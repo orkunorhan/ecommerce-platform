@@ -150,7 +150,7 @@ function ProductGrid({ products, viewMode }) {
 
     return (
         <section className="flex w-full justify-center bg-white px-6 pb-20">
-            <div className="flex w-full max-w-[1050px] flex-col items-center gap-y-12 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-[30px] sm:gap-y-[80px]">
+            <div className="flex w-full max-w-[1050px] flex-col items-center gap-y-12 sm:flex-row sm:flex-wrap sm:justify-start sm:gap-x-[30px] sm:gap-y-[80px]">
                 {products.map((product) => (
                     <ProductCard
                         key={product.id}

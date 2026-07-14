@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { LoaderCircle } from "lucide-react";
@@ -12,6 +12,7 @@ import TopCategories from "../components/shop/TopCategories";
 import {
     fetchProducts,
     setFilter,
+    setOffset,
     setSort,
 } from "../store/actions/productActions";
 
@@ -38,8 +39,6 @@ const sortOptions = [
     },
 ];
 
-const productsPerPage = 4;
-
 function ShopPage() {
     const { categoryId } = useParams();
     const dispatch = useDispatch();
@@ -64,31 +63,45 @@ function ShopPage() {
         (state) => state.product.fetchState,
     );
 
+    const limit = useSelector(
+        (state) => state.product.limit,
+    );
+
+    const offset = useSelector(
+        (state) => state.product.offset,
+    );
+
     const [filterInput, setFilterInput] = useState(filter);
     const [selectedSort, setSelectedSort] = useState(sort);
     const [viewMode, setViewMode] = useState("grid");
-    const [currentPage, setCurrentPage] = useState(1);
+
+    const productsSectionRef = useRef(null);
+
+    const currentPage = Math.floor(offset / limit) + 1;
+    const totalPages = Math.ceil(total / limit);
+
+    const firstVisibleProduct =
+        products.length > 0 ? offset + 1 : 0;
+
+    const lastVisibleProduct =
+        products.length > 0
+            ? Math.min(offset + products.length, total)
+            : 0;
 
     useEffect(() => {
         dispatch(fetchProducts(categoryId)).catch(() => {
             // Failed state is handled through Redux.
         });
-    }, [categoryId, filter, sort, dispatch]);
+    }, [
+        categoryId,
+        filter,
+        sort,
+        limit,
+        offset,
+        dispatch,
+    ]);
 
-    const totalPages = Math.ceil(
-        products.length / productsPerPage,
-    );
 
-    const startIndex =
-        (currentPage - 1) * productsPerPage;
-
-    const endIndex =
-        startIndex + productsPerPage;
-
-    const displayedProducts = products.slice(
-        startIndex,
-        endIndex,
-    );
 
     const handleSortChange = (value) => {
         setSelectedSort(value);
@@ -100,25 +113,28 @@ function ShopPage() {
 
     const handleViewChange = (value) => {
         setViewMode(value);
-        setCurrentPage(1);
     };
 
     const handleFilterClick = () => {
         dispatch(setFilter(filterInput.trim()));
         dispatch(setSort(selectedSort));
-        setCurrentPage(1);
+        dispatch(setOffset(0));
     };
 
     const handlePageChange = (page) => {
-        if (page < 1 || page > totalPages) {
+        if (
+            page < 1 ||
+            page > totalPages ||
+            page === currentPage
+        ) {
             return;
         }
 
-        setCurrentPage(page);
+        dispatch(setOffset((page - 1) * limit));
 
-        window.scrollTo({
-            top: 0,
+        productsSectionRef.current?.scrollIntoView({
             behavior: "smooth",
+            block: "start",
         });
     };
 
@@ -127,18 +143,24 @@ function ShopPage() {
             <ShopHero />
             <TopCategories />
 
-            <ProductToolbar
-                showingCount={products.length}
-                totalProducts={total}
-                viewMode={viewMode}
-                sortBy={selectedSort}
-                sortOptions={sortOptions}
-                filterInput={filterInput}
-                onViewChange={handleViewChange}
-                onSortChange={handleSortChange}
-                onFilterInputChange={handleFilterInputChange}
-                onFilterClick={handleFilterClick}
-            />
+            <div
+                ref={productsSectionRef}
+                className="scroll-mt-6"
+            >
+                <ProductToolbar
+                    firstVisibleProduct={firstVisibleProduct}
+                    lastVisibleProduct={lastVisibleProduct}
+                    totalProducts={total}
+                    viewMode={viewMode}
+                    sortBy={selectedSort}
+                    sortOptions={sortOptions}
+                    filterInput={filterInput}
+                    onViewChange={handleViewChange}
+                    onSortChange={handleSortChange}
+                    onFilterInputChange={handleFilterInputChange}
+                    onFilterClick={handleFilterClick}
+                />
+            </div>
 
             {fetchState === "FETCHING" &&
                 products.length === 0 && (
@@ -175,7 +197,7 @@ function ShopPage() {
             {products.length > 0 && (
                 <>
                     <ProductGrid
-                        products={displayedProducts}
+                        products={products}
                         viewMode={viewMode}
                     />
 

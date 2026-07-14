@@ -1,11 +1,13 @@
 import { ChevronDown, Heart, Search, ShoppingCart, User, } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import GravatarAvatar from "../common/GravatarAvatar";
 import { getCategoryPath } from "../../utils/categoryUtils";
+import { setOffset } from "../../store/actions/productActions";
 
 function MobileMenu({ isOpen, onNavigate }) {
+    const dispatch = useDispatch();
     const [isShopOpen, setIsShopOpen] = useState(false);
 
     const user = useSelector((state) => state.client.user);
@@ -26,6 +28,11 @@ function MobileMenu({ isOpen, onNavigate }) {
     const handleNavigate = () => {
         setIsShopOpen(false);
         onNavigate?.();
+    };
+
+    const handleCategoryNavigate = () => {
+        dispatch(setOffset(0));
+        handleNavigate();
     };
 
     if (!isOpen) {
@@ -84,13 +91,13 @@ function MobileMenu({ isOpen, onNavigate }) {
                             <CategoryColumn
                                 title="Kadın"
                                 categories={womenCategories}
-                                onNavigate={handleNavigate}
+                                onNavigate={handleCategoryNavigate}
                             />
 
                             <CategoryColumn
                                 title="Erkek"
                                 categories={menCategories}
-                                onNavigate={handleNavigate}
+                                onNavigate={handleCategoryNavigate}
                             />
                         </div>
                     )}

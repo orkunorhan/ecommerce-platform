@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { ChevronDown } from "lucide-react";
-
+import { setOffset } from "../../store/actions/productActions";
 import { getCategoryPath } from "../../utils/categoryUtils";
 
 function ShopDropdown() {
+    const dispatch = useDispatch();
+
     const [isOpen, setIsOpen] = useState(false);
 
     const categories = useSelector(
@@ -22,6 +24,11 @@ function ShopDropdown() {
 
     const closeDropdown = () => {
         setIsOpen(false);
+    };
+
+    const handleCategoryNavigate = () => {
+        dispatch(setOffset(0));
+        closeDropdown();
     };
 
     return (
@@ -47,21 +54,21 @@ function ShopDropdown() {
 
             <div
                 className={`absolute left-1/2 top-full z-50 min-w-[340px] -translate-x-1/2 pt-4 transition-all duration-200 ${isOpen
-                        ? "visible opacity-100"
-                        : "invisible opacity-0"
+                    ? "visible opacity-100"
+                    : "invisible opacity-0"
                     }`}
             >
                 <div className="grid grid-cols-2 gap-12 bg-white px-8 py-6 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
                     <CategoryColumn
                         title="Kadın"
                         categories={womenCategories}
-                        onNavigate={closeDropdown}
+                        onNavigate={handleCategoryNavigate}
                     />
 
                     <CategoryColumn
                         title="Erkek"
                         categories={menCategories}
-                        onNavigate={closeDropdown}
+                        onNavigate={handleCategoryNavigate}
                     />
                 </div>
             </div>
