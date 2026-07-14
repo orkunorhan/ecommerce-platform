@@ -1,37 +1,47 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { LoaderCircle } from "lucide-react";
+
 import Pagination from "../components/common/Pagination";
+import BrandLogos from "../components/common/BrandLogos";
 import ProductGrid from "../components/shop/ProductGrid";
 import ProductToolbar from "../components/shop/ProductToolbar";
 import ShopHero from "../components/shop/ShopHero";
-//import shopProducts from "../data/shopProducts";
-import { fetchProducts } from "../store/actions/productActions";
-import BrandLogos from "../components/common/BrandLogos";
 import TopCategories from "../components/shop/TopCategories";
+import {
+    fetchProducts,
+    setFilter,
+    setSort,
+} from "../store/actions/productActions";
 
 const sortOptions = [
     {
-        value: "popularity",
-        label: "Popularity",
+        value: "",
+        label: "Sort by",
     },
     {
-        value: "price-low-to-high",
+        value: "price:asc",
         label: "Price: Low to High",
     },
     {
-        value: "price-high-to-low",
+        value: "price:desc",
         label: "Price: High to Low",
     },
     {
-        value: "name-a-to-z",
-        label: "Name: A to Z",
+        value: "rating:asc",
+        label: "Rating: Low to High",
+    },
+    {
+        value: "rating:desc",
+        label: "Rating: High to Low",
     },
 ];
 
 const productsPerPage = 4;
 
 function ShopPage() {
+    const { categoryId } = useParams();
     const dispatch = useDispatch();
 
     const products = useSelector(
@@ -42,77 +52,50 @@ function ShopPage() {
         (state) => state.product.total,
     );
 
+    const filter = useSelector(
+        (state) => state.product.filter,
+    );
+
+    const sort = useSelector(
+        (state) => state.product.sort,
+    );
+
     const fetchState = useSelector(
         (state) => state.product.fetchState,
     );
 
+    const [filterInput, setFilterInput] = useState(filter);
+    const [selectedSort, setSelectedSort] = useState(sort);
     const [viewMode, setViewMode] = useState("grid");
-    const [sortBy, setSortBy] = useState("popularity");
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        dispatch(fetchProducts()).catch(() => {
+        dispatch(fetchProducts(categoryId)).catch(() => {
             // Failed state is handled through Redux.
         });
-    }, [dispatch]);
-
-    const sortedProducts = useMemo(() => {
-        const productsCopy = [...products];
-
-        switch (sortBy) {
-            case "price-low-to-high":
-                return productsCopy.sort(
-                    (firstProduct, secondProduct) =>
-                        Number(firstProduct.price) -
-                        Number(secondProduct.price),
-                );
-
-            case "price-high-to-low":
-                return productsCopy.sort(
-                    (firstProduct, secondProduct) =>
-                        Number(secondProduct.price) -
-                        Number(firstProduct.price),
-                );
-
-            case "name-a-to-z":
-                return productsCopy.sort(
-                    (firstProduct, secondProduct) =>
-                        firstProduct.name.localeCompare(
-                            secondProduct.name,
-                            "tr",
-                        ),
-                );
-
-            case "popularity":
-            default:
-                return productsCopy.sort(
-                    (firstProduct, secondProduct) =>
-                        secondProduct.sell_count -
-                        firstProduct.sell_count,
-                );
-        }
-    }, [products, sortBy]);
+    }, [categoryId, filter, sort, dispatch]);
 
     const totalPages = Math.ceil(
-        sortedProducts.length / productsPerPage,
+        products.length / productsPerPage,
     );
 
-    const displayedProducts = useMemo(() => {
-        const startIndex =
-            (currentPage - 1) * productsPerPage;
+    const startIndex =
+        (currentPage - 1) * productsPerPage;
 
-        const endIndex =
-            startIndex + productsPerPage;
+    const endIndex =
+        startIndex + productsPerPage;
 
-        return sortedProducts.slice(
-            startIndex,
-            endIndex,
-        );
-    }, [currentPage, sortedProducts]);
+    const displayedProducts = products.slice(
+        startIndex,
+        endIndex,
+    );
 
     const handleSortChange = (value) => {
-        setSortBy(value);
-        setCurrentPage(1);
+        setSelectedSort(value);
+    };
+
+    const handleFilterInputChange = (value) => {
+        setFilterInput(value);
     };
 
     const handleViewChange = (value) => {
@@ -120,7 +103,11 @@ function ShopPage() {
         setCurrentPage(1);
     };
 
-    const handleFilterClick = () => { };
+    const handleFilterClick = () => {
+        dispatch(setFilter(filterInput.trim()));
+        dispatch(setSort(selectedSort));
+        setCurrentPage(1);
+    };
 
     const handlePageChange = (page) => {
         if (page < 1 || page > totalPages) {
@@ -144,41 +131,46 @@ function ShopPage() {
                 showingCount={products.length}
                 totalProducts={total}
                 viewMode={viewMode}
-                sortBy={sortBy}
+                sortBy={selectedSort}
                 sortOptions={sortOptions}
+                filterInput={filterInput}
                 onViewChange={handleViewChange}
                 onSortChange={handleSortChange}
+                onFilterInputChange={handleFilterInputChange}
                 onFilterClick={handleFilterClick}
             />
 
-            {fetchState === "FETCHING" && (
-                <section className="flex min-h-[320px] items-center justify-center bg-white">
-                    <LoaderCircle
-                        aria-hidden="true"
-                        className="h-10 w-10 animate-spin text-[#23A6F0]"
-                    />
-                </section>
-            )}
+            {fetchState === "FETCHING" &&
+                products.length === 0 && (
+                    <section className="flex min-h-[320px] items-center justify-center bg-white">
+                        <LoaderCircle
+                            aria-hidden="true"
+                            className="h-10 w-10 animate-spin text-[#23A6F0]"
+                        />
+                    </section>
+                )}
 
-            {fetchState === "FAILED" && (
-                <section
-                    role="alert"
-                    className="flex min-h-[260px] items-center justify-center bg-white px-6 text-center"
-                >
-                    <p className="text-base font-semibold text-[#E74040]">
-                        Products could not be loaded. Please try again.
-                    </p>
-                </section>
-            )}
+            {fetchState === "FAILED" &&
+                products.length === 0 && (
+                    <section
+                        role="alert"
+                        className="flex min-h-[260px] items-center justify-center bg-white px-6 text-center"
+                    >
+                        <p className="text-base font-semibold text-[#E74040]">
+                            Products could not be loaded. Please try
+                            again.
+                        </p>
+                    </section>
+                )}
 
-            {fetchState === "FETCHING" && products.length === 0 && (
-                <section className="flex min-h-[320px] items-center justify-center bg-white">
-                    <LoaderCircle
-                        aria-hidden="true"
-                        className="h-10 w-10 animate-spin text-[#23A6F0]"
-                    />
-                </section>
-            )}
+            {fetchState === "FETCHED" &&
+                products.length === 0 && (
+                    <section className="flex min-h-[260px] items-center justify-center bg-white px-6 text-center">
+                        <p className="text-base font-semibold text-[#737373]">
+                            No products were found.
+                        </p>
+                    </section>
+                )}
 
             {products.length > 0 && (
                 <>

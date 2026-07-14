@@ -7,6 +7,7 @@ import {
   SET_OFFSET,
   SET_PRODUCT_LIST,
   SET_TOTAL,
+  SET_SORT,
 } from "../actionTypes";
 
 export const setCategories = (categories) => ({
@@ -44,6 +45,11 @@ export const setFilter = (filter) => ({
   payload: filter,
 });
 
+export const setSort = (sort) => ({
+  type: SET_SORT,
+  payload: sort,
+});
+
 let categoriesRequest = null;
 
 export const fetchCategoriesIfNeeded = () => {
@@ -77,22 +83,27 @@ let productsRequest = null;
 let activeProductsRequestKey = null;
 let lastFetchedProductsKey = null;
 
-export const fetchProducts = () => {
+export const fetchProducts = (categoryId) => {
   return async (dispatch, getState) => {
-    const { productList, limit, offset, filter } = getState().product;
+    const { productList, total, limit, offset, filter, sort } =
+      getState().product;
 
     const normalizedFilter = filter.trim();
+    const normalizedSort = sort.trim();
+    const normalizedCategoryId = categoryId ? Number(categoryId) : null;
 
     const requestKey = JSON.stringify({
+      category: normalizedCategoryId,
+      filter: normalizedFilter,
+      sort: normalizedSort,
       limit,
       offset,
-      filter: normalizedFilter,
     });
 
     if (productList.length > 0 && lastFetchedProductsKey === requestKey) {
       return {
         products: productList,
-        total: getState().product.total,
+        total,
       };
     }
 
@@ -105,8 +116,16 @@ export const fetchProducts = () => {
       offset,
     };
 
+    if (normalizedCategoryId) {
+      params.category = normalizedCategoryId;
+    }
+
     if (normalizedFilter) {
       params.filter = normalizedFilter;
+    }
+
+    if (normalizedSort) {
+      params.sort = normalizedSort;
     }
 
     dispatch(setFetchState("FETCHING"));
@@ -114,12 +133,9 @@ export const fetchProducts = () => {
     activeProductsRequestKey = requestKey;
 
     productsRequest = axiosInstance
-      .get("/products", {
-        params,
-      })
+      .get("/products", { params })
       .then((response) => {
         dispatch(setProductList(response.data.products));
-
         dispatch(setTotal(response.data.total));
         dispatch(setFetchState("FETCHED"));
 
@@ -129,7 +145,6 @@ export const fetchProducts = () => {
       })
       .catch((error) => {
         dispatch(setFetchState("FAILED"));
-
         throw error;
       })
       .finally(() => {

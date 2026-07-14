@@ -6,6 +6,7 @@ import {
   SET_OFFSET,
   SET_PRODUCT_LIST,
   SET_TOTAL,
+  SET_SORT,
 } from "../actionTypes";
 
 export const FETCH_STATES = {
@@ -22,6 +23,7 @@ const initialState = {
   limit: 25,
   offset: 0,
   filter: "",
+  sort: "",
   fetchState: FETCH_STATES.NOT_FETCHED,
 };
 
@@ -67,6 +69,12 @@ function productReducer(state = initialState, action) {
       return {
         ...state,
         filter: action.payload,
+      };
+
+    case SET_SORT:
+      return {
+        ...state,
+        sort: action.payload,
       };
 
     default:

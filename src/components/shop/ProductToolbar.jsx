@@ -6,8 +6,10 @@ function ProductToolbar({
     viewMode,
     sortBy,
     sortOptions,
+    filterInput,
     onViewChange,
     onSortChange,
+    onFilterInputChange,
     onFilterClick,
 }) {
     return (
@@ -50,7 +52,18 @@ function ProductToolbar({
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-[15px]">
+                    <div className="flex flex-col items-center gap-[15px] sm:flex-row">
+                        <input
+                            type="search"
+                            value={filterInput}
+                            onChange={(event) =>
+                                onFilterInputChange(event.target.value)
+                            }
+                            placeholder="Search products"
+                            aria-label="Filter products"
+                            className="h-[50px] w-full min-w-[180px] rounded-[5px] border border-[#DDDDDD] bg-white px-4 text-sm text-[#252B42] outline-none placeholder:text-[#737373] sm:w-auto"
+                        />
+
                         <div className="relative flex">
                             <select
                                 value={sortBy}
@@ -58,7 +71,7 @@ function ProductToolbar({
                                     onSortChange(event.target.value)
                                 }
                                 aria-label="Sort products"
-                                className="h-[50px] min-w-[141px] appearance-none rounded-[5px] border border-[#DDDDDD] bg-white px-5 pr-10 text-sm leading-7 tracking-[0.2px] text-[#737373] outline-none"
+                                className="h-[50px] min-w-[180px] appearance-none rounded-[5px] border border-[#DDDDDD] bg-white px-5 pr-10 text-sm leading-7 tracking-[0.2px] text-[#737373] outline-none"
                             >
                                 {sortOptions.map((option) => (
                                     <option
