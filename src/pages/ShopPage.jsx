@@ -12,6 +12,7 @@ import TopCategories from "../components/shop/TopCategories";
 import {
     fetchProducts,
     setFilter,
+    setOffset,
     setSort,
 } from "../store/actions/productActions";
 
@@ -38,8 +39,6 @@ const sortOptions = [
     },
 ];
 
-const productsPerPage = 4;
-
 function ShopPage() {
     const { categoryId } = useParams();
     const dispatch = useDispatch();
@@ -64,31 +63,34 @@ function ShopPage() {
         (state) => state.product.fetchState,
     );
 
+    const limit = useSelector(
+        (state) => state.product.limit,
+    );
+
+    const offset = useSelector(
+        (state) => state.product.offset,
+    );
+
     const [filterInput, setFilterInput] = useState(filter);
     const [selectedSort, setSelectedSort] = useState(sort);
     const [viewMode, setViewMode] = useState("grid");
-    const [currentPage, setCurrentPage] = useState(1);
+    const currentPage =
+        Math.floor(offset / limit) + 1;
 
     useEffect(() => {
         dispatch(fetchProducts(categoryId)).catch(() => {
             // Failed state is handled through Redux.
         });
-    }, [categoryId, filter, sort, dispatch]);
+    }, [
+        categoryId,
+        filter,
+        sort,
+        limit,
+        offset,
+        dispatch,
+    ]);
 
-    const totalPages = Math.ceil(
-        products.length / productsPerPage,
-    );
-
-    const startIndex =
-        (currentPage - 1) * productsPerPage;
-
-    const endIndex =
-        startIndex + productsPerPage;
-
-    const displayedProducts = products.slice(
-        startIndex,
-        endIndex,
-    );
+    const totalPages = Math.ceil(total / limit);
 
     const handleSortChange = (value) => {
         setSelectedSort(value);
@@ -100,13 +102,12 @@ function ShopPage() {
 
     const handleViewChange = (value) => {
         setViewMode(value);
-        setCurrentPage(1);
     };
 
     const handleFilterClick = () => {
         dispatch(setFilter(filterInput.trim()));
         dispatch(setSort(selectedSort));
-        setCurrentPage(1);
+        dispatch(setOffset(0));
     };
 
     const handlePageChange = (page) => {
@@ -114,7 +115,9 @@ function ShopPage() {
             return;
         }
 
-        setCurrentPage(page);
+        const nextOffset = (page - 1) * limit;
+
+        dispatch(setOffset(nextOffset));
 
         window.scrollTo({
             top: 0,
@@ -175,7 +178,7 @@ function ShopPage() {
             {products.length > 0 && (
                 <>
                     <ProductGrid
-                        products={displayedProducts}
+                        products={products}
                         viewMode={viewMode}
                     />
 
