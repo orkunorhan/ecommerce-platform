@@ -99,24 +99,25 @@ function ProductGallery({
                 )}
             </div>
 
-            {hasMultipleImages && (
+            {hasImages && (
                 <div className="mt-5 flex gap-5 overflow-x-auto">
                     {images.map((image, index) => (
                         <button
                             key={`${image.url}-${image.index ?? index}`}
                             type="button"
                             aria-label={`Show product image ${index + 1}`}
-                            onClick={() =>
-                                setActiveImageIndex(index)
-                            }
-                            className={`flex h-[75px] w-[100px] shrink-0 overflow-hidden ${safeActiveImageIndex === index
+                            onClick={() => setActiveImageIndex(index)}
+                            className={`flex h-[75px] w-[100px] shrink-0 overflow-hidden transition-opacity ${safeActiveImageIndex === index
                                 ? "opacity-100"
                                 : "opacity-60"
                                 }`}
                         >
                             <img
                                 src={image.url}
-                                alt={image.alt || productName}
+                                alt={
+                                    image.alt ||
+                                    `${productName} ${index + 1}`
+                                }
                                 className="h-full w-full object-cover"
                             />
                         </button>

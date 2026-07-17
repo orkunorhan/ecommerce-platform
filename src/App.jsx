@@ -6,7 +6,7 @@ import PageContent from "./layout/PageContent";
 import Footer from "./layout/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import ScrollToTop from "./components/common/ScrollToTop";
 import { verifyToken } from "./store/actions/clientActions";
 import { fetchCategoriesIfNeeded } from "./store/actions/productActions";
 
@@ -23,6 +23,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="flex min-h-screen flex-col bg-white">
         <Header />
         <PageContent />
