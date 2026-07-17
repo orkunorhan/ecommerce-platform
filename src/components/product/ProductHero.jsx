@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+
 import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 
@@ -17,6 +18,7 @@ function ProductHero({ product }) {
 
                     <ChevronRight
                         size={16}
+                        aria-hidden="true"
                         className="text-[#BDBDBD]"
                     />
 
@@ -31,8 +33,8 @@ function ProductHero({ product }) {
 
             <div className="mx-auto flex w-full max-w-[1050px] flex-col gap-12 px-8 pb-16 lg:flex-row lg:gap-14">
                 <ProductGallery
-                    images={product.images}
-                    productName={product.name}
+                    images={product.images ?? []}
+                    productName={product.name ?? "Product"}
                 />
 
                 <ProductInfo product={product} />

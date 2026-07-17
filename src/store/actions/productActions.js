@@ -8,6 +8,8 @@ import {
   SET_PRODUCT_LIST,
   SET_TOTAL,
   SET_SORT,
+  SET_PRODUCT,
+  SET_PRODUCT_FETCH_STATE,
 } from "../actionTypes";
 
 export const setCategories = (categories) => ({
@@ -18,6 +20,16 @@ export const setCategories = (categories) => ({
 export const setProductList = (productList) => ({
   type: SET_PRODUCT_LIST,
   payload: productList,
+});
+
+export const setProduct = (product) => ({
+  type: SET_PRODUCT,
+  payload: product,
+});
+
+export const setProductFetchState = (fetchState) => ({
+  type: SET_PRODUCT_FETCH_STATE,
+  payload: fetchState,
 });
 
 export const setTotal = (total) => ({
@@ -153,5 +165,25 @@ export const fetchProducts = (categoryId) => {
       });
 
     return productsRequest;
+  };
+};
+
+export const fetchProductById = (productId) => {
+  return async (dispatch) => {
+    dispatch(setProductFetchState("FETCHING"));
+
+    try {
+      const response = await axiosInstance.get(`/products/${productId}`);
+
+      dispatch(setProduct(response.data));
+      dispatch(setProductFetchState("FETCHED"));
+
+      return response.data;
+    } catch (error) {
+      dispatch(setProduct({}));
+      dispatch(setProductFetchState("FAILED"));
+
+      throw error;
+    }
   };
 };

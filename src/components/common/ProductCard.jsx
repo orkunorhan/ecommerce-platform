@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import {
+    createSlug,
+    getCategoryPath,
+} from "../../utils/categoryUtils";
 
 function ProductCard({ product, showColors = true }) {
     const categories = useSelector(
@@ -9,6 +13,10 @@ function ProductCard({ product, showColors = true }) {
     const category = categories.find(
         (item) => item.id === Number(product.category_id),
     );
+
+    const productPath = category
+        ? `${getCategoryPath(category)}/${createSlug(product.name)}/${product.id}`
+        : `/product/${product.id}`;
 
     const imageUrl =
         product.images?.find((image) => image.index === 0)?.url ||
@@ -27,15 +35,15 @@ function ProductCard({ product, showColors = true }) {
 
     return (
         <Link
-            to={`/product/${product.id}`}
-            className="flex w-[240px] flex-col items-center bg-white"
+            to={productPath}
+            className="group flex w-[240px] cursor-pointer flex-col items-center bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
         >
             <div className="h-[427px] w-[240px] overflow-hidden bg-[#F3F3F3]">
                 {imageUrl ? (
                     <img
                         src={imageUrl}
                         alt={product.name}
-                        className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                 ) : (
                     <div className="flex h-full items-center justify-center px-5 text-center text-sm font-semibold text-[#737373]">

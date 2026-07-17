@@ -14,17 +14,21 @@ function PageContent() {
         <main className="flex flex-1 flex-col">
             <Switch>
                 <Route exact path="/" component={HomePage} />
-                <Route exact path="/shop" component={ShopPage} />
-                <Route
-                    exact
-                    path="/shop/:gender/:categoryName/:categoryId"
-                    component={ShopPage}
-                />
-                <Route
-                    exact
-                    path="/product/:productId"
-                    component={ProductDetailPage}
-                />
+                <Switch>
+                    <Route
+                        exact
+                        path="/shop/:gender/:categoryName/:categoryId/:productNameSlug/:productId"
+                        component={ProductDetailPage}
+                    />
+
+                    <Route
+                        exact
+                        path="/shop/:gender/:categoryName/:categoryId"
+                        component={ShopPage}
+                    />
+
+                    <Route exact path="/shop" component={ShopPage} />
+                </Switch>
                 <Route
                     exact
                     path="/contact"
