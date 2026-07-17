@@ -7,6 +7,8 @@ import {
   SET_PRODUCT_LIST,
   SET_TOTAL,
   SET_SORT,
+  SET_PRODUCT,
+  SET_PRODUCT_FETCH_STATE,
 } from "../actionTypes";
 
 export const FETCH_STATES = {
@@ -19,12 +21,14 @@ export const FETCH_STATES = {
 const initialState = {
   categories: [],
   productList: [],
+  product: {},
   total: 0,
   limit: 24,
   offset: 0,
   filter: "",
   sort: "",
   fetchState: FETCH_STATES.NOT_FETCHED,
+  productFetchState: FETCH_STATES.NOT_FETCHED,
 };
 
 function productReducer(state = initialState, action) {
@@ -39,6 +43,18 @@ function productReducer(state = initialState, action) {
       return {
         ...state,
         productList: action.payload,
+      };
+
+    case SET_PRODUCT:
+      return {
+        ...state,
+        product: action.payload,
+      };
+
+    case SET_PRODUCT_FETCH_STATE:
+      return {
+        ...state,
+        productFetchState: action.payload,
       };
 
     case SET_TOTAL:
