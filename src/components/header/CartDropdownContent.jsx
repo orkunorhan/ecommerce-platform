@@ -1,10 +1,13 @@
 import { ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
+
 import CartDropdownItem from "./CartDropdownItem";
 
 function CartDropdownContent({
     cart,
     totalCartItemCount,
     totalCartPrice,
+    onNavigate,
 }) {
     const formattedTotalPrice = totalCartPrice.toLocaleString(
         "en-US",
@@ -31,12 +34,21 @@ function CartDropdownContent({
                     <ShoppingCart
                         size={36}
                         strokeWidth={1.5}
+                        aria-hidden="true"
                         className="mx-auto text-[#737373]"
                     />
 
                     <p className="mt-3 text-sm font-semibold text-[#737373]">
                         Your shopping cart is empty.
                     </p>
+
+                    <Link
+                        to="/shop"
+                        onClick={onNavigate}
+                        className="mt-5 inline-flex h-10 items-center justify-center rounded-[5px] bg-[#23A6F0] px-5 text-sm font-bold text-white transition-opacity hover:opacity-80"
+                    >
+                        Start Shopping
+                    </Link>
                 </div>
             ) : (
                 <>
@@ -61,16 +73,19 @@ function CartDropdownContent({
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
-                            <button
-                                type="button"
-                                className="h-11 rounded-[5px] border border-[#23A6F0] text-sm font-bold text-[#23A6F0] transition-colors hover:bg-[#EAF6FD]"
+                            <Link
+                                to="/cart"
+                                onClick={onNavigate}
+                                className="flex h-11 items-center justify-center rounded-[5px] border border-[#23A6F0] text-sm font-bold text-[#23A6F0] transition-colors hover:bg-[#EAF6FD]"
                             >
                                 View Cart
-                            </button>
+                            </Link>
 
                             <button
                                 type="button"
-                                className="h-11 rounded-[5px] bg-[#23A6F0] text-sm font-bold text-white transition-opacity hover:opacity-80"
+                                disabled
+                                title="Checkout will be implemented in a later task."
+                                className="h-11 cursor-not-allowed rounded-[5px] bg-[#23A6F0] text-sm font-bold text-white opacity-50"
                             >
                                 Checkout
                             </button>
