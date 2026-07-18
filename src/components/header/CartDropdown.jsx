@@ -109,10 +109,9 @@ function CartDropdown({ mobile = false }) {
                 >
                     <CartDropdownContent
                         cart={cart}
-                        totalCartItemCount={
-                            totalCartItemCount
-                        }
+                        totalCartItemCount={totalCartItemCount}
                         totalCartPrice={totalCartPrice}
+                        onNavigate={() => setIsOpen(false)}
                     />
                 </div>
             )}

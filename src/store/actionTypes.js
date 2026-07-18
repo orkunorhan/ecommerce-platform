@@ -18,3 +18,8 @@ export const SET_CART = "SET_CART";
 export const SET_PAYMENT = "SET_PAYMENT";
 export const SET_ADDRESS = "SET_ADDRESS";
 export const ADD_TO_CART = "ADD_TO_CART";
+
+export const INCREASE_CART_ITEM = "INCREASE_CART_ITEM";
+export const DECREASE_CART_ITEM = "DECREASE_CART_ITEM";
+export const REMOVE_FROM_CART = "REMOVE_FROM_CART";
+export const TOGGLE_CART_ITEM = "TOGGLE_CART_ITEM";
