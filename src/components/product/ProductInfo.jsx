@@ -4,13 +4,25 @@ import {
     ShoppingCart,
     Star,
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../store/actions/shoppingCartActions";
 
 function ProductInfo({ product }) {
+    const dispatch = useDispatch();
+
     const rating = Number(product.rating) || 0;
     const roundedRating = Math.round(rating);
     const price = Number(product.price) || 0;
     const stock = Number(product.stock) || 0;
     const sellCount = Number(product.sell_count) || 0;
+
+    const handleAddToCart = () => {
+        if (stock <= 0) {
+            return;
+        }
+
+        dispatch(addToCart(product));
+    };
 
     return (
         <div className="flex w-full flex-col text-left lg:max-w-[510px]">
@@ -30,11 +42,7 @@ function ProductInfo({ product }) {
                             <Star
                                 key={index}
                                 size={22}
-                                fill={
-                                    isFilled
-                                        ? "#F3CD03"
-                                        : "transparent"
-                                }
+                                fill={isFilled ? "#F3CD03" : "transparent"}
                                 className="text-[#F3CD03]"
                             />
                         );
@@ -106,6 +114,7 @@ function ProductInfo({ product }) {
                     type="button"
                     aria-label="Add to cart"
                     disabled={stock <= 0}
+                    onClick={handleAddToCart}
                     className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8E8E8] bg-white text-[#252B42] transition-colors hover:bg-[#F3F3F3] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     <ShoppingCart size={20} />
