@@ -1,8 +1,18 @@
-import { SET_ADDRESS, SET_CART, SET_PAYMENT } from "../actionTypes";
+import {
+  ADD_TO_CART,
+  SET_ADDRESS,
+  SET_CART,
+  SET_PAYMENT,
+} from "../actionTypes";
 
 export const setCart = (cart) => ({
   type: SET_CART,
   payload: cart,
+});
+
+export const addToCart = (product) => ({
+  type: ADD_TO_CART,
+  payload: product,
 });
 
 export const setPayment = (payment) => ({

@@ -1,9 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    useHistory,
-    useParams,
-} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { LoaderCircle } from "lucide-react";
 
 import ProductHero from "../components/product/ProductHero";
@@ -16,7 +13,6 @@ import { FETCH_STATES } from "../store/reducers/productReducer";
 
 function ProductDetailPage() {
     const dispatch = useDispatch();
-    const history = useHistory();
     const { productId } = useParams();
 
     const product = useSelector(
@@ -36,10 +32,6 @@ function ProductDetailPage() {
             // Failed state is handled through Redux.
         });
     }, [dispatch, productId]);
-
-    const handleBack = () => {
-        history.goBack();
-    };
 
     if (
         productFetchState === FETCH_STATES.NOT_FETCHED ||
@@ -70,48 +62,42 @@ function ProductDetailPage() {
                     have occurred while loading the product details.
                 </p>
 
-                <button
-                    type="button"
-                    onClick={handleBack}
+                <Link
+                    to="/shop"
                     className="rounded-md bg-[#23A6F0] px-6 py-3 text-sm font-bold text-white transition-opacity duration-200 hover:opacity-80"
                 >
-                    Go Back
-                </button>
+                    Back to Shop
+                </Link>
             </main>
         );
     }
 
     if (!product?.id) {
         return (
-            <main className="mx-auto flex min-h-[500px] max-w-[1200px] flex-col items-center justify-center gap-6 px-6 text-center">
+            <main
+                role="alert"
+                className="mx-auto flex min-h-[500px] max-w-[1200px] flex-col items-center justify-center gap-6 px-6 text-center"
+            >
                 <h1 className="text-2xl font-bold text-[#252B42]">
                     Product not found.
                 </h1>
 
-                <button
-                    type="button"
-                    onClick={handleBack}
+                <p className="max-w-[500px] text-sm leading-6 text-[#737373]">
+                    The requested product could not be found.
+                </p>
+
+                <Link
+                    to="/shop"
                     className="rounded-md bg-[#23A6F0] px-6 py-3 text-sm font-bold text-white transition-opacity duration-200 hover:opacity-80"
                 >
-                    Go Back
-                </button>
+                    Back to Shop
+                </Link>
             </main>
         );
     }
 
     return (
         <main>
-            <div className="mx-auto flex w-full max-w-[1200px] px-6 pt-6">
-                <button
-                    type="button"
-                    onClick={handleBack}
-                    className="flex items-center gap-2 text-sm font-bold text-[#737373] transition-colors duration-200 hover:text-[#23A6F0]"
-                >
-                    <span aria-hidden="true">←</span>
-                    Back
-                </button>
-            </div>
-
             <ProductHero product={product} />
 
             <ProductTabs product={product} />

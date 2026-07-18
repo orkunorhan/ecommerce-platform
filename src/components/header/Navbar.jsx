@@ -3,7 +3,6 @@ import {
     Heart,
     Menu,
     Search,
-    ShoppingCart,
     User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -11,6 +10,7 @@ import { useSelector } from "react-redux";
 import MobileMenu from "./MobileMenu";
 import GravatarAvatar from "../common/GravatarAvatar";
 import ShopDropdown from "../navigation/ShopDropdown";
+import CartDropdown from "./CartDropdown";
 
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -112,27 +112,34 @@ function Navbar() {
                         </div>
                     )}
 
-                    <button type="button" aria-label="Search">
-                        <Search size={18} strokeWidth={2.5} />
-                    </button>
+                    <div className="flex items-center gap-5 text-[#23A6F0]">
+                        <button
+                            type="button"
+                            aria-label="Search"
+                        >
+                            <Search
+                                size={18}
+                                strokeWidth={2.5}
+                            />
+                        </button>
 
-                    <button
-                        type="button"
-                        aria-label="Shopping cart"
-                        className="flex items-center gap-[5px]"
-                    >
-                        <ShoppingCart size={18} strokeWidth={2.5} />
-                        <span className="text-xs leading-4">1</span>
-                    </button>
+                        <CartDropdown />
 
-                    <button
-                        type="button"
-                        aria-label="Wishlist"
-                        className="flex items-center gap-[5px]"
-                    >
-                        <Heart size={18} strokeWidth={2.5} />
-                        <span className="text-xs leading-4">1</span>
-                    </button>
+                        <button
+                            type="button"
+                            aria-label="Wishlist"
+                            className="flex items-center gap-[5px]"
+                        >
+                            <Heart
+                                size={18}
+                                strokeWidth={2.5}
+                            />
+
+                            <span className="text-xs leading-4">
+                                1
+                            </span>
+                        </button>
+                    </div>
                 </div>
 
                 <button

@@ -1,10 +1,11 @@
-import { ChevronDown, Heart, Search, ShoppingCart, User, } from "lucide-react";
+import { ChevronDown, Heart, Search, User, } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import GravatarAvatar from "../common/GravatarAvatar";
 import { getCategoryPath } from "../../utils/categoryUtils";
 import { setOffset } from "../../store/actions/productActions";
+import CartDropdown from "./CartDropdown";
 
 function MobileMenu({ isOpen, onNavigate }) {
     const dispatch = useDispatch();
@@ -144,7 +145,7 @@ function MobileMenu({ isOpen, onNavigate }) {
                 </Link>
             </nav>
 
-            <div className="mt-12 flex flex-col items-center gap-7 text-[#23A6F0]">
+            <div className="mt-12 flex w-full max-w-[360px] flex-col items-center gap-7 text-[#23A6F0]">
                 {isLoggedIn ? (
                     <div className="flex items-center gap-3 text-[20px] font-bold leading-[30px]">
                         <GravatarAvatar
@@ -162,7 +163,11 @@ function MobileMenu({ isOpen, onNavigate }) {
                             onClick={handleNavigate}
                             className="flex items-center gap-2 transition-colors hover:text-[#1B8ED1]"
                         >
-                            <User size={24} strokeWidth={2} />
+                            <User
+                                size={24}
+                                strokeWidth={2}
+                            />
+
                             Login
                         </Link>
 
@@ -178,31 +183,35 @@ function MobileMenu({ isOpen, onNavigate }) {
                     </div>
                 )}
 
-                <button
-                    type="button"
-                    aria-label="Search"
-                    className="flex items-center justify-center"
-                >
-                    <Search size={26} strokeWidth={1.8} />
-                </button>
+                <div className="relative grid w-full grid-cols-3 items-center text-[#23A6F0]">
+                    <button
+                        type="button"
+                        aria-label="Search"
+                        className="col-start-1 row-start-1 flex justify-center"
+                    >
+                        <Search
+                            size={26}
+                            strokeWidth={1.8}
+                        />
+                    </button>
 
-                <button
-                    type="button"
-                    aria-label="Shopping cart"
-                    className="flex items-center gap-1"
-                >
-                    <ShoppingCart size={26} strokeWidth={1.8} />
-                    <span className="text-xs">1</span>
-                </button>
+                    <CartDropdown mobile />
 
-                <button
-                    type="button"
-                    aria-label="Wishlist"
-                    className="flex items-center gap-1"
-                >
-                    <Heart size={26} strokeWidth={1.8} />
-                    <span className="text-xs">1</span>
-                </button>
+                    <button
+                        type="button"
+                        aria-label="Wishlist"
+                        className="col-start-3 row-start-1 flex items-center justify-center gap-1"
+                    >
+                        <Heart
+                            size={26}
+                            strokeWidth={1.8}
+                        />
+
+                        <span className="text-xs leading-4">
+                            1
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     );
