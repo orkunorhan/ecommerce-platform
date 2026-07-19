@@ -1,7 +1,11 @@
 import { useSelector } from "react-redux";
 
 import EmptyCart from "../components/cart/EmptyCart";
+import OrderSummary from "../components/cart/OrderSummary";
 import ShoppingCartList from "../components/cart/ShoppingCartList";
+
+const SHIPPING_PRICE = 29.99;
+const DISCOUNT = 0;
 
 function ShoppingCartPage() {
     const cart = useSelector(
@@ -25,15 +29,19 @@ function ShoppingCartPage() {
         0,
     );
 
-    const formattedSelectedTotalPrice =
-        selectedTotalPrice.toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
+    const shippingPrice =
+        selectedCartItems.length > 0
+            ? SHIPPING_PRICE
+            : 0;
+
+    const grandTotal =
+        selectedTotalPrice +
+        shippingPrice -
+        DISCOUNT;
 
     return (
         <section className="flex w-full flex-1 bg-[#FAFAFA] py-10 lg:py-14">
-            <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-8">
+            <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold leading-tight text-[#252B42]">
                         Shopping Cart
@@ -48,33 +56,18 @@ function ShoppingCartPage() {
                 {cart.length === 0 ? (
                     <EmptyCart />
                 ) : (
-                    <div className="overflow-hidden rounded-lg border border-[#E6E6E6] bg-white shadow-sm">
-                        <ShoppingCartList cart={cart} />
-
-                        <div className="flex flex-col gap-4 border-t border-[#E6E6E6] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                            <div>
-                                <p className="text-sm font-semibold text-[#737373]">
-                                    Selected items
-                                </p>
-
-                                <p className="mt-1 text-sm font-bold text-[#252B42]">
-                                    {selectedItemCount}{" "}
-                                    {selectedItemCount === 1
-                                        ? "item"
-                                        : "items"}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-8 sm:justify-end">
-                                <span className="text-sm font-bold text-[#737373]">
-                                    Selected Total
-                                </span>
-
-                                <span className="text-xl font-bold text-[#252B42]">
-                                    ${formattedSelectedTotalPrice}
-                                </span>
-                            </div>
+                    <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+                        <div className="min-w-0 overflow-hidden rounded-lg border border-[#E6E6E6] bg-white shadow-sm">
+                            <ShoppingCartList cart={cart} />
                         </div>
+
+                        <OrderSummary
+                            productsTotal={selectedTotalPrice}
+                            shippingPrice={shippingPrice}
+                            discount={DISCOUNT}
+                            grandTotal={grandTotal}
+                            selectedItemCount={selectedItemCount}
+                        />
                     </div>
                 )}
             </div>
