@@ -54,8 +54,8 @@ function ShoppingCartItem({ cartItem }) {
 
     return (
         <article className="border-b border-[#E6E6E6] last:border-b-0">
-            <div className="flex flex-col gap-5 px-5 py-5 lg:grid lg:grid-cols-[24px_1fr_180px_140px_140px_60px] lg:items-center lg:px-6">
-                <div className="flex items-center justify-between lg:block">
+            <div className="flex flex-col gap-5 px-5 py-5 xl:grid xl:grid-cols-[44px_minmax(280px,1fr)_132px_96px_96px_96px] xl:items-center xl:gap-x-4 xl:px-6 xl:py-6">
+                <div className="flex items-center justify-between xl:justify-center">
                     <label className="group flex cursor-pointer items-center">
                         <input
                             type="checkbox"
@@ -82,7 +82,10 @@ function ShoppingCartItem({ cartItem }) {
                             <Check
                                 size={14}
                                 strokeWidth={3}
-                                className={`text-white transition-opacity duration-150 ${checked ? "opacity-100" : "opacity-0"
+                                aria-hidden="true"
+                                className={`text-white transition-opacity duration-150 ${checked
+                                    ? "opacity-100"
+                                    : "opacity-0"
                                     }`}
                             />
                         </span>
@@ -92,7 +95,7 @@ function ShoppingCartItem({ cartItem }) {
                         type="button"
                         onClick={handleRemove}
                         aria-label={`Remove ${product.name} from cart`}
-                        className="flex h-10 w-10 items-center justify-center rounded-md text-[#E74040] transition-colors hover:bg-[#FFF1F1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E74040]/30 lg:hidden"
+                        className="flex h-10 w-10 items-center justify-center rounded-md text-[#E74040] transition-colors hover:bg-[#FFF1F1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E74040]/30 xl:hidden"
                     >
                         <Trash2
                             size={20}
@@ -123,7 +126,7 @@ function ShoppingCartItem({ cartItem }) {
                         </h2>
 
                         {product.description && (
-                            <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#737373]">
+                            <p className="mt-1 line-clamp-2 max-w-[300px] text-xs leading-5 text-[#737373]">
                                 {product.description}
                             </p>
                         )}
@@ -143,8 +146,8 @@ function ShoppingCartItem({ cartItem }) {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between gap-4 lg:block">
-                    <span className="text-sm font-semibold text-[#737373] lg:hidden">
+                <div className="flex items-center justify-between gap-4 xl:justify-center">
+                    <span className="text-sm font-semibold text-[#737373] xl:hidden">
                         Quantity
                     </span>
 
@@ -155,27 +158,27 @@ function ShoppingCartItem({ cartItem }) {
                     />
                 </div>
 
-                <div className="flex items-center justify-between gap-4 lg:block">
-                    <span className="text-sm font-semibold text-[#737373] lg:hidden">
+                <div className="flex items-center justify-between gap-4 xl:justify-center">
+                    <span className="text-sm font-semibold text-[#737373] xl:hidden">
                         Unit Price
                     </span>
 
-                    <span className="text-sm font-bold text-[#252B42]">
+                    <span className="whitespace-nowrap text-sm font-bold text-[#252B42]">
                         ${formattedProductPrice}
                     </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-4 lg:block">
-                    <span className="text-sm font-semibold text-[#737373] lg:hidden">
+                <div className="flex items-center justify-between gap-4 xl:justify-center">
+                    <span className="text-sm font-semibold text-[#737373] xl:hidden">
                         Total
                     </span>
 
-                    <span className="text-base font-bold text-[#252B42]">
+                    <span className="whitespace-nowrap text-base font-bold text-[#252B42]">
                         ${formattedRowTotal}
                     </span>
                 </div>
 
-                <div className="hidden justify-center lg:flex">
+                <div className="hidden justify-center xl:flex">
                     <button
                         type="button"
                         onClick={handleRemove}
