@@ -1,15 +1,27 @@
-import { ChevronDown, Heart, Search, User, } from "lucide-react";
+import {
+    ChevronDown,
+    Heart,
+    LogOut,
+    Package,
+    Search,
+    User,
+} from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import GravatarAvatar from "../common/GravatarAvatar";
 import { getCategoryPath } from "../../utils/categoryUtils";
 import { setOffset } from "../../store/actions/productActions";
+import { logoutUser } from "../../store/actions/clientActions";
 import CartDropdown from "./CartDropdown";
 
 function MobileMenu({ isOpen, onNavigate }) {
     const dispatch = useDispatch();
+    const history = useHistory();
+
     const [isShopOpen, setIsShopOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
     const user = useSelector((state) => state.client.user);
     const categories = useSelector(
@@ -28,12 +40,19 @@ function MobileMenu({ isOpen, onNavigate }) {
 
     const handleNavigate = () => {
         setIsShopOpen(false);
+        setIsUserMenuOpen(false);
         onNavigate?.();
     };
 
     const handleCategoryNavigate = () => {
         dispatch(setOffset(0));
         handleNavigate();
+    };
+
+    const handleLogout = () => {
+        dispatch(logoutUser());
+        handleNavigate();
+        history.push("/");
     };
 
     if (!isOpen) {
@@ -65,7 +84,8 @@ function MobileMenu({ isOpen, onNavigate }) {
                             type="button"
                             onClick={() =>
                                 setIsShopOpen(
-                                    (currentValue) => !currentValue,
+                                    (currentValue) =>
+                                        !currentValue,
                                 )
                             }
                             aria-label={
@@ -92,13 +112,17 @@ function MobileMenu({ isOpen, onNavigate }) {
                             <CategoryColumn
                                 title="Kadın"
                                 categories={womenCategories}
-                                onNavigate={handleCategoryNavigate}
+                                onNavigate={
+                                    handleCategoryNavigate
+                                }
                             />
 
                             <CategoryColumn
                                 title="Erkek"
                                 categories={menCategories}
-                                onNavigate={handleCategoryNavigate}
+                                onNavigate={
+                                    handleCategoryNavigate
+                                }
                             />
                         </div>
                     )}
@@ -147,14 +171,65 @@ function MobileMenu({ isOpen, onNavigate }) {
 
             <div className="mt-12 flex w-full max-w-[360px] flex-col items-center gap-7 text-[#23A6F0]">
                 {isLoggedIn ? (
-                    <div className="flex items-center gap-3 text-[20px] font-bold leading-[30px]">
-                        <GravatarAvatar
-                            email={user.email}
-                            name={user.name}
-                            size={36}
-                        />
+                    <div className="flex w-full flex-col items-center">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setIsUserMenuOpen(
+                                    (previousState) =>
+                                        !previousState,
+                                )
+                            }
+                            aria-haspopup="menu"
+                            aria-expanded={isUserMenuOpen}
+                            className="flex items-center gap-3 text-[20px] font-bold leading-[30px] transition-colors hover:text-[#1B8ED1]"
+                        >
+                            <GravatarAvatar
+                                email={user.email}
+                                name={user.name}
+                                size={36}
+                            />
 
-                        <span>{user.name}</span>
+                            <span>{user.name}</span>
+
+                            <ChevronDown
+                                size={20}
+                                strokeWidth={2}
+                                className={`transition-transform duration-200 ${isUserMenuOpen
+                                    ? "rotate-180"
+                                    : ""
+                                    }`}
+                            />
+                        </button>
+
+                        {isUserMenuOpen && (
+                            <div
+                                role="menu"
+                                className="mt-5 flex w-full max-w-[120px] flex-col overflow-hidden rounded-md border border-[#E6E6E6] bg-white py-2 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+                            >
+                                <Link
+                                    to="/orders"
+                                    role="menuitem"
+                                    onClick={handleNavigate}
+                                    className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-[#737373] transition-colors hover:bg-[#F9F9F9] hover:text-[#23A6F0]"
+                                >
+                                    <Package size={18} />
+                                    Orders
+                                </Link>
+
+                                <div className="border-t border-[#E6E6E6]" />
+
+                                <button
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={handleLogout}
+                                    className="flex w-full items-center gap-3 px-5 py-3 text-left text-sm font-semibold text-[#E74040] transition-colors hover:bg-[#FFF5F5]"
+                                >
+                                    <LogOut size={18} />
+                                    Logout
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="flex items-center gap-2 text-[20px] font-bold leading-[30px]">
@@ -195,7 +270,10 @@ function MobileMenu({ isOpen, onNavigate }) {
                         />
                     </button>
 
-                    <CartDropdown mobile />
+                    <CartDropdown
+                        mobile
+                        onNavigate={handleNavigate}
+                    />
 
                     <button
                         type="button"

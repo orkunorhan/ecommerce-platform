@@ -4,6 +4,8 @@ import axiosInstance, {
 } from "../../api/axiosInstance";
 import { SET_LANGUAGE, SET_ROLES, SET_THEME, SET_USER } from "../actionTypes";
 
+const TOKEN_STORAGE_KEY = "token";
+
 let rolesRequest = null;
 
 export const setUser = (user) => ({
@@ -25,6 +27,44 @@ export const setLanguage = (language) => ({
   type: SET_LANGUAGE,
   payload: language,
 });
+
+const clearStoredTokens = () => {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
+  sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+};
+
+const storeToken = (token, rememberMe) => {
+  clearStoredTokens();
+
+  if (rememberMe) {
+    localStorage.setItem(TOKEN_STORAGE_KEY, token);
+    return;
+  }
+
+  sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
+};
+
+const getStoredToken = () => {
+  const rememberedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+
+  if (rememberedToken) {
+    return {
+      token: rememberedToken,
+      storage: localStorage,
+    };
+  }
+
+  const sessionToken = sessionStorage.getItem(TOKEN_STORAGE_KEY);
+
+  if (sessionToken) {
+    return {
+      token: sessionToken,
+      storage: sessionStorage,
+    };
+  }
+
+  return null;
+};
 
 export const fetchRolesIfNeeded = () => {
   return async (dispatch, getState) => {
@@ -67,14 +107,9 @@ export const loginUser = ({ email, password, rememberMe }) => {
       token: response.data.token,
     };
 
-    dispatch(setUser(user));
+    storeToken(response.data.token, rememberMe);
     setAuthorizationToken(response.data.token);
-
-    if (rememberMe) {
-      localStorage.setItem("token", response.data.token);
-    } else {
-      localStorage.removeItem("token");
-    }
+    dispatch(setUser(user));
 
     return user;
   };
@@ -82,15 +117,17 @@ export const loginUser = ({ email, password, rememberMe }) => {
 
 export const verifyToken = () => {
   return async (dispatch) => {
-    const token = localStorage.getItem("token");
+    const storedToken = getStoredToken();
 
-    if (!token) {
+    if (!storedToken) {
       clearAuthorizationToken();
+      dispatch(setUser({}));
+
       return null;
     }
 
     try {
-      setAuthorizationToken(token);
+      setAuthorizationToken(storedToken.token);
 
       const response = await axiosInstance.get("/verify");
 
@@ -101,18 +138,26 @@ export const verifyToken = () => {
         token: response.data.token,
       };
 
-      dispatch(setUser(user));
+      storedToken.storage.setItem(TOKEN_STORAGE_KEY, response.data.token);
 
-      localStorage.setItem("token", response.data.token);
       setAuthorizationToken(response.data.token);
+      dispatch(setUser(user));
 
       return user;
     } catch (error) {
-      localStorage.removeItem("token");
+      clearStoredTokens();
       clearAuthorizationToken();
       dispatch(setUser({}));
 
       throw error;
     }
+  };
+};
+
+export const logoutUser = () => {
+  return (dispatch) => {
+    clearStoredTokens();
+    clearAuthorizationToken();
+    dispatch(setUser({}));
   };
 };
