@@ -1,5 +1,7 @@
 import { Route, Switch } from "react-router-dom";
 
+import ProtectedRoute from "../components/common/ProtectedRoute";
+
 import HomePage from "../pages/HomePage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ShopPage from "../pages/ShopPage";
@@ -10,6 +12,7 @@ import AboutPage from "../pages/AboutPage";
 import SignupPage from "../pages/SignupPage";
 import LoginPage from "../pages/LoginPage";
 import ShoppingCartPage from "../pages/ShoppingCartPage";
+import CreateOrderPage from "../pages/CreateOrderPage";
 
 function PageContent() {
     return (
@@ -28,6 +31,11 @@ function PageContent() {
                 />
                 <Route exact path="/shop" component={ShopPage} />
                 <Route exact path="/cart" component={ShoppingCartPage} />
+                <ProtectedRoute
+                    exact
+                    path="/order"
+                    component={CreateOrderPage}
+                />
                 <Route exact path="/contact" component={ContactPage} />
                 <Route exact path="/team" component={TeamPage} />
                 <Route exact path="/about" component={AboutPage} />

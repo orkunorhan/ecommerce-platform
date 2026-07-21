@@ -2,11 +2,23 @@ import axiosInstance, {
   clearAuthorizationToken,
   setAuthorizationToken,
 } from "../../api/axiosInstance";
-import { SET_LANGUAGE, SET_ROLES, SET_THEME, SET_USER } from "../actionTypes";
+
+import {
+  SET_LANGUAGE,
+  SET_ROLES,
+  SET_THEME,
+  SET_USER,
+  SET_AUTH_CHECKED,
+} from "../actionTypes";
 
 const TOKEN_STORAGE_KEY = "token";
 
 let rolesRequest = null;
+
+export const setAuthChecked = (authChecked) => ({
+  type: SET_AUTH_CHECKED,
+  payload: authChecked,
+});
 
 export const setUser = (user) => ({
   type: SET_USER,
@@ -109,7 +121,9 @@ export const loginUser = ({ email, password, rememberMe }) => {
 
     storeToken(response.data.token, rememberMe);
     setAuthorizationToken(response.data.token);
+
     dispatch(setUser(user));
+    dispatch(setAuthChecked(true));
 
     return user;
   };
@@ -122,6 +136,7 @@ export const verifyToken = () => {
     if (!storedToken) {
       clearAuthorizationToken();
       dispatch(setUser({}));
+      dispatch(setAuthChecked(true));
 
       return null;
     }
@@ -141,6 +156,7 @@ export const verifyToken = () => {
       storedToken.storage.setItem(TOKEN_STORAGE_KEY, response.data.token);
 
       setAuthorizationToken(response.data.token);
+
       dispatch(setUser(user));
 
       return user;
@@ -150,6 +166,8 @@ export const verifyToken = () => {
       dispatch(setUser({}));
 
       throw error;
+    } finally {
+      dispatch(setAuthChecked(true));
     }
   };
 };
@@ -158,6 +176,8 @@ export const logoutUser = () => {
   return (dispatch) => {
     clearStoredTokens();
     clearAuthorizationToken();
+
     dispatch(setUser({}));
+    dispatch(setAuthChecked(true));
   };
 };

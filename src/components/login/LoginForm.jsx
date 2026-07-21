@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import {
+    useHistory,
+    useLocation,
+} from "react-router-dom";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -12,6 +15,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function LoginForm() {
     const dispatch = useDispatch();
     const history = useHistory();
+    const location = useLocation();
 
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,13 +33,15 @@ function LoginForm() {
         },
     });
 
-    const redirectToPreviousPage = () => {
-        if (history.length > 1) {
-            history.goBack();
+    const redirectAfterLogin = () => {
+        const previousLocation = location.state?.from;
+
+        if (previousLocation) {
+            history.replace(previousLocation);
             return;
         }
 
-        history.push("/");
+        history.replace("/");
     };
 
     const onSubmit = async (formData) => {
@@ -52,7 +58,7 @@ function LoginForm() {
 
             toast.success("You have successfully logged in.");
 
-            redirectToPreviousPage();
+            redirectAfterLogin();
         } catch (error) {
             const errorMessage =
                 error.response?.data?.message ||
@@ -117,7 +123,11 @@ function LoginForm() {
                 <div className="relative">
                     <input
                         id="password"
-                        type={showPassword ? "text" : "password"}
+                        type={
+                            showPassword
+                                ? "text"
+                                : "password"
+                        }
                         placeholder="Enter your password"
                         autoComplete="current-password"
                         {...register("password", {
@@ -133,7 +143,8 @@ function LoginForm() {
                         type="button"
                         onClick={() =>
                             setShowPassword(
-                                (previousState) => !previousState,
+                                (previousState) =>
+                                    !previousState,
                             )
                         }
                         aria-label={
@@ -183,7 +194,9 @@ function LoginForm() {
                     />
                 )}
 
-                {isSubmitting ? "Logging In..." : "Login"}
+                {isSubmitting
+                    ? "Logging In..."
+                    : "Login"}
             </button>
         </form>
     );
