@@ -34,6 +34,11 @@ function App() {
         autoClose={5000}
         closeOnClick
         pauseOnHover
+        newestOnTop
+        limit={3}
+        className="app-toast-container"
+        toastClassName="app-toast"
+        bodyClassName="app-toast-body"
       />
     </Router>
   );

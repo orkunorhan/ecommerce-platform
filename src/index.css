@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+.app-toast-container {
+  z-index: 9999;
+}
+
+.app-toast {
+  min-height: 64px;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.app-toast-body {
+  margin: 0;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+@media (max-width: 640px) {
+  .app-toast-container {
+    top: 12px !important;
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+    padding: 0 !important;
+  }
+
+  .app-toast {
+    width: 100%;
+    min-height: 56px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+  }
+
+  .app-toast-body {
+    padding: 4px 6px;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .Toastify__close-button {
+    align-self: center;
+  }
+}
