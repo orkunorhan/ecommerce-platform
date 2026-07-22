@@ -9,13 +9,11 @@ function CartDropdownContent({
     totalCartPrice,
     onNavigate,
 }) {
-    const formattedTotalPrice = totalCartPrice.toLocaleString(
-        "en-US",
-        {
+    const formattedTotalPrice =
+        totalCartPrice.toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-        },
-    );
+        });
 
     return (
         <div className="overflow-hidden rounded-md border border-[#E6E6E6] bg-white text-left text-[#252B42] shadow-[0_10px_30px_rgba(0,0,0,0.15)]">

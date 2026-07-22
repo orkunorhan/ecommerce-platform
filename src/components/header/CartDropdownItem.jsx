@@ -5,10 +5,13 @@ function CartDropdownItem({ cartItem }) {
     const subtotal = productPrice * count;
     const imageUrl = product.images?.[0]?.url;
 
-    const formattedSubtotal = subtotal.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    });
+    const formattedSubtotal = subtotal.toLocaleString(
+        "en-US",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        },
+    );
 
     return (
         <div className="flex gap-4 border-b border-[#E6E6E6] px-5 py-4 last:border-b-0">

@@ -4,7 +4,10 @@ import { useSelector } from "react-redux";
 
 import CartDropdownContent from "./CartDropdownContent";
 
-function CartDropdown({ mobile = false }) {
+function CartDropdown({
+    mobile = false,
+    onNavigate,
+}) {
     const [isOpen, setIsOpen] = useState(false);
 
     const dropdownRef = useRef(null);
@@ -27,6 +30,11 @@ function CartDropdown({ mobile = false }) {
         },
         0,
     );
+
+    const handleNavigate = () => {
+        setIsOpen(false);
+        onNavigate?.();
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -109,9 +117,11 @@ function CartDropdown({ mobile = false }) {
                 >
                     <CartDropdownContent
                         cart={cart}
-                        totalCartItemCount={totalCartItemCount}
+                        totalCartItemCount={
+                            totalCartItemCount
+                        }
                         totalCartPrice={totalCartPrice}
-                        onNavigate={() => setIsOpen(false)}
+                        onNavigate={handleNavigate}
                     />
                 </div>
             )}
