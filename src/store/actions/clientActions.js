@@ -9,6 +9,9 @@ import {
   SET_THEME,
   SET_USER,
   SET_AUTH_CHECKED,
+  SET_ADDRESS_LIST,
+  SET_ADDRESS_FETCH_STATE,
+  SET_ADDRESS_ERROR,
 } from "../actionTypes";
 
 const TOKEN_STORAGE_KEY = "token";
@@ -38,6 +41,21 @@ export const setTheme = (theme) => ({
 export const setLanguage = (language) => ({
   type: SET_LANGUAGE,
   payload: language,
+});
+
+export const setAddressList = (addressList) => ({
+  type: SET_ADDRESS_LIST,
+  payload: addressList,
+});
+
+export const setAddressFetchState = (fetchState) => ({
+  type: SET_ADDRESS_FETCH_STATE,
+  payload: fetchState,
+});
+
+export const setAddressError = (error) => ({
+  type: SET_ADDRESS_ERROR,
+  payload: error,
 });
 
 const clearStoredTokens = () => {
@@ -76,6 +94,14 @@ const getStoredToken = () => {
   }
 
   return null;
+};
+
+const normalizeAddressResponse = (responseData) => {
+  if (Array.isArray(responseData)) {
+    return responseData[0] ?? null;
+  }
+
+  return responseData?.[0] ?? responseData?.["0"] ?? null;
 };
 
 export const fetchRolesIfNeeded = () => {
@@ -172,12 +198,152 @@ export const verifyToken = () => {
   };
 };
 
+export const fetchAddresses = () => {
+  return async (dispatch) => {
+    dispatch(setAddressFetchState("fetching"));
+    dispatch(setAddressError(null));
+
+    try {
+      const response = await axiosInstance.get("/user/address");
+
+      const addressList = Array.isArray(response.data) ? response.data : [];
+
+      dispatch(setAddressList(addressList));
+      dispatch(setAddressFetchState("fetched"));
+
+      return addressList;
+    } catch (error) {
+      dispatch(setAddressFetchState("failed"));
+      dispatch(
+        setAddressError(
+          error.response?.data?.message || "Addresses could not be loaded.",
+        ),
+      );
+
+      throw error;
+    }
+  };
+};
+
+export const createAddress = (addressData) => {
+  return async (dispatch, getState) => {
+    dispatch(setAddressFetchState("saving"));
+    dispatch(setAddressError(null));
+
+    try {
+      const response = await axiosInstance.post("/user/address", addressData);
+
+      const createdAddress = normalizeAddressResponse(response.data);
+
+      if (!createdAddress) {
+        throw new Error("The created address could not be read.");
+      }
+
+      const currentAddressList = getState().client.addressList;
+
+      dispatch(setAddressList([...currentAddressList, createdAddress]));
+
+      dispatch(setAddressFetchState("fetched"));
+
+      return createdAddress;
+    } catch (error) {
+      dispatch(setAddressFetchState("failed"));
+      dispatch(
+        setAddressError(
+          error.response?.data?.message ||
+            error.message ||
+            "Address could not be created.",
+        ),
+      );
+
+      throw error;
+    }
+  };
+};
+
+export const updateAddress = (addressData) => {
+  return async (dispatch, getState) => {
+    dispatch(setAddressFetchState("saving"));
+    dispatch(setAddressError(null));
+
+    try {
+      const response = await axiosInstance.put("/user/address", addressData);
+
+      const updatedAddress = normalizeAddressResponse(response.data);
+
+      if (!updatedAddress) {
+        throw new Error("The updated address could not be read.");
+      }
+
+      const currentAddressList = getState().client.addressList;
+
+      dispatch(
+        setAddressList(
+          currentAddressList.map((address) =>
+            address.id === updatedAddress.id ? updatedAddress : address,
+          ),
+        ),
+      );
+
+      dispatch(setAddressFetchState("fetched"));
+
+      return updatedAddress;
+    } catch (error) {
+      dispatch(setAddressFetchState("failed"));
+      dispatch(
+        setAddressError(
+          error.response?.data?.message ||
+            error.message ||
+            "Address could not be updated.",
+        ),
+      );
+
+      throw error;
+    }
+  };
+};
+
+export const deleteAddress = (addressId) => {
+  return async (dispatch, getState) => {
+    dispatch(setAddressFetchState("deleting"));
+    dispatch(setAddressError(null));
+
+    try {
+      await axiosInstance.delete(`/user/address/${addressId}`);
+
+      const currentAddressList = getState().client.addressList;
+
+      dispatch(
+        setAddressList(
+          currentAddressList.filter((address) => address.id !== addressId),
+        ),
+      );
+
+      dispatch(setAddressFetchState("fetched"));
+
+      return addressId;
+    } catch (error) {
+      dispatch(setAddressFetchState("failed"));
+      dispatch(
+        setAddressError(
+          error.response?.data?.message || "Address could not be deleted.",
+        ),
+      );
+
+      throw error;
+    }
+  };
+};
+
 export const logoutUser = () => {
   return (dispatch) => {
     clearStoredTokens();
     clearAuthorizationToken();
 
     dispatch(setUser({}));
+    dispatch(setAddressList([]));
+    dispatch(setAddressError(null));
+    dispatch(setAddressFetchState("idle"));
     dispatch(setAuthChecked(true));
   };
 };

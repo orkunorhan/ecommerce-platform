@@ -12,7 +12,11 @@ import {
 const initialState = {
   cart: [],
   payment: {},
-  address: {},
+  address: {
+    shippingAddress: null,
+    billingAddress: null,
+    sameAddress: true,
+  },
 };
 
 function shoppingCartReducer(state = initialState, action) {

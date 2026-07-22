@@ -4,6 +4,10 @@ export const SET_ROLES = "SET_ROLES";
 export const SET_THEME = "SET_THEME";
 export const SET_LANGUAGE = "SET_LANGUAGE";
 
+export const SET_ADDRESS_LIST = "SET_ADDRESS_LIST";
+export const SET_ADDRESS_FETCH_STATE = "SET_ADDRESS_FETCH_STATE";
+export const SET_ADDRESS_ERROR = "SET_ADDRESS_ERROR";
+
 export const SET_CATEGORIES = "SET_CATEGORIES";
 export const SET_PRODUCT_LIST = "SET_PRODUCT_LIST";
 export const SET_PRODUCT = "SET_PRODUCT";

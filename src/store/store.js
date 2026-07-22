@@ -50,7 +50,11 @@ const preloadedState = {
   shoppingCart: {
     cart: loadCartFromStorage(),
     payment: {},
-    address: {},
+    address: {
+      shippingAddress: null,
+      billingAddress: null,
+      sameAddress: true,
+    },
   },
 };
 

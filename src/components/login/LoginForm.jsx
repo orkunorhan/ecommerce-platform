@@ -176,7 +176,7 @@ function LoginForm() {
                 <input
                     type="checkbox"
                     {...register("rememberMe")}
-                    className="h-4 w-4 rounded border-[#BDBDBD] accent-[#23A6F0]"
+                    className="h-4 w-4 rounded border-[#BDBDBD] accent-[#1c9be4]"
                 />
 
                 <span>Remember me</span>
