@@ -12,6 +12,9 @@ import {
   SET_ADDRESS_LIST,
   SET_ADDRESS_FETCH_STATE,
   SET_ADDRESS_ERROR,
+  SET_CARD_LIST,
+  SET_CARD_FETCH_STATE,
+  SET_CARD_ERROR,
 } from "../actionTypes";
 
 const TOKEN_STORAGE_KEY = "token";
@@ -58,6 +61,21 @@ export const setAddressError = (error) => ({
   payload: error,
 });
 
+export const setCardList = (cardList) => ({
+  type: SET_CARD_LIST,
+  payload: cardList,
+});
+
+export const setCardFetchState = (fetchState) => ({
+  type: SET_CARD_FETCH_STATE,
+  payload: fetchState,
+});
+
+export const setCardError = (error) => ({
+  type: SET_CARD_ERROR,
+  payload: error,
+});
+
 const clearStoredTokens = () => {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
   sessionStorage.removeItem(TOKEN_STORAGE_KEY);
@@ -96,7 +114,7 @@ const getStoredToken = () => {
   return null;
 };
 
-const normalizeAddressResponse = (responseData) => {
+const normalizeEntityResponse = (responseData) => {
   if (Array.isArray(responseData)) {
     return responseData[0] ?? null;
   }
@@ -233,7 +251,7 @@ export const createAddress = (addressData) => {
     try {
       const response = await axiosInstance.post("/user/address", addressData);
 
-      const createdAddress = normalizeAddressResponse(response.data);
+      const createdAddress = normalizeEntityResponse(response.data);
 
       if (!createdAddress) {
         throw new Error("The created address could not be read.");
@@ -269,7 +287,7 @@ export const updateAddress = (addressData) => {
     try {
       const response = await axiosInstance.put("/user/address", addressData);
 
-      const updatedAddress = normalizeAddressResponse(response.data);
+      const updatedAddress = normalizeEntityResponse(response.data);
 
       if (!updatedAddress) {
         throw new Error("The updated address could not be read.");
@@ -335,15 +353,155 @@ export const deleteAddress = (addressId) => {
   };
 };
 
+export const fetchCards = () => {
+  return async (dispatch) => {
+    dispatch(setCardFetchState("fetching"));
+    dispatch(setCardError(null));
+
+    try {
+      const response = await axiosInstance.get("/user/card");
+
+      const cardList = Array.isArray(response.data) ? response.data : [];
+
+      dispatch(setCardList(cardList));
+      dispatch(setCardFetchState("fetched"));
+
+      return cardList;
+    } catch (error) {
+      dispatch(setCardFetchState("failed"));
+      dispatch(
+        setCardError(
+          error.response?.data?.message || "Cards could not be loaded.",
+        ),
+      );
+
+      throw error;
+    }
+  };
+};
+
+export const createCard = (cardData) => {
+  return async (dispatch, getState) => {
+    dispatch(setCardFetchState("saving"));
+    dispatch(setCardError(null));
+
+    try {
+      const response = await axiosInstance.post("/user/card", cardData);
+
+      const createdCard = normalizeEntityResponse(response.data);
+
+      if (!createdCard) {
+        throw new Error("The created card could not be read.");
+      }
+
+      const currentCardList = getState().client.cardList;
+
+      dispatch(setCardList([...currentCardList, createdCard]));
+      dispatch(setCardFetchState("fetched"));
+
+      return createdCard;
+    } catch (error) {
+      dispatch(setCardFetchState("failed"));
+      dispatch(
+        setCardError(
+          error.response?.data?.message ||
+            error.message ||
+            "Card could not be created.",
+        ),
+      );
+
+      throw error;
+    }
+  };
+};
+
+export const updateCard = (cardData) => {
+  return async (dispatch, getState) => {
+    dispatch(setCardFetchState("saving"));
+    dispatch(setCardError(null));
+
+    try {
+      const response = await axiosInstance.put("/user/card", cardData);
+
+      const updatedCard = normalizeEntityResponse(response.data);
+
+      if (!updatedCard) {
+        throw new Error("The updated card could not be read.");
+      }
+
+      const currentCardList = getState().client.cardList;
+
+      dispatch(
+        setCardList(
+          currentCardList.map((card) =>
+            card.id === updatedCard.id ? updatedCard : card,
+          ),
+        ),
+      );
+
+      dispatch(setCardFetchState("fetched"));
+
+      return updatedCard;
+    } catch (error) {
+      dispatch(setCardFetchState("failed"));
+      dispatch(
+        setCardError(
+          error.response?.data?.message ||
+            error.message ||
+            "Card could not be updated.",
+        ),
+      );
+
+      throw error;
+    }
+  };
+};
+
+export const deleteCard = (cardId) => {
+  return async (dispatch, getState) => {
+    dispatch(setCardFetchState("deleting"));
+    dispatch(setCardError(null));
+
+    try {
+      await axiosInstance.delete(`/user/card/${cardId}`);
+
+      const currentCardList = getState().client.cardList;
+
+      dispatch(
+        setCardList(currentCardList.filter((card) => card.id !== cardId)),
+      );
+
+      dispatch(setCardFetchState("fetched"));
+
+      return cardId;
+    } catch (error) {
+      dispatch(setCardFetchState("failed"));
+      dispatch(
+        setCardError(
+          error.response?.data?.message || "Card could not be deleted.",
+        ),
+      );
+
+      throw error;
+    }
+  };
+};
+
 export const logoutUser = () => {
   return (dispatch) => {
     clearStoredTokens();
     clearAuthorizationToken();
 
     dispatch(setUser({}));
+
     dispatch(setAddressList([]));
     dispatch(setAddressError(null));
     dispatch(setAddressFetchState("idle"));
+
+    dispatch(setCardList([]));
+    dispatch(setCardError(null));
+    dispatch(setCardFetchState("idle"));
+
     dispatch(setAuthChecked(true));
   };
 };

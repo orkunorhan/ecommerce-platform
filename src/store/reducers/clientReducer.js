@@ -7,15 +7,23 @@ import {
   SET_ADDRESS_LIST,
   SET_ADDRESS_FETCH_STATE,
   SET_ADDRESS_ERROR,
+  SET_CARD_LIST,
+  SET_CARD_FETCH_STATE,
+  SET_CARD_ERROR,
 } from "../actionTypes";
 
 const initialState = {
   user: {},
   authChecked: false,
+
   addressList: [],
   addressFetchState: "idle",
   addressError: null,
-  creditCards: [],
+
+  cardList: [],
+  cardFetchState: "idle",
+  cardError: null,
+
   roles: [],
   theme: "",
   language: "",
@@ -51,6 +59,24 @@ function clientReducer(state = initialState, action) {
       return {
         ...state,
         addressError: action.payload,
+      };
+
+    case SET_CARD_LIST:
+      return {
+        ...state,
+        cardList: action.payload,
+      };
+
+    case SET_CARD_FETCH_STATE:
+      return {
+        ...state,
+        cardFetchState: action.payload,
+      };
+
+    case SET_CARD_ERROR:
+      return {
+        ...state,
+        cardError: action.payload,
       };
 
     case SET_ROLES:
