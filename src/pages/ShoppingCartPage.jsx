@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-
+import { useHistory } from "react-router-dom";
 import EmptyCart from "../components/cart/EmptyCart";
 import OrderSummary from "../components/cart/OrderSummary";
 import ShoppingCartList from "../components/cart/ShoppingCartList";
@@ -8,6 +8,12 @@ const SHIPPING_PRICE = 29.99;
 const DISCOUNT = 0;
 
 function ShoppingCartPage() {
+    const history = useHistory();
+
+    const handleCreateOrder = () => {
+        history.push("/order");
+    };
+
     const cart = useSelector(
         (state) => state.shoppingCart.cart,
     );
@@ -67,6 +73,9 @@ function ShoppingCartPage() {
                             discount={DISCOUNT}
                             grandTotal={grandTotal}
                             selectedItemCount={selectedItemCount}
+                            buttonText="Create Order"
+                            buttonDisabled={selectedItemCount === 0}
+                            onButtonClick={handleCreateOrder}
                         />
                     </div>
                 )}

@@ -2,6 +2,9 @@ import { useEffect } from "react";
 import {
     AlertTriangle,
     LoaderCircle,
+    MapPin,
+    Phone,
+    UserRound,
     X,
 } from "lucide-react";
 
@@ -74,7 +77,10 @@ function DeleteAddressModal({
                 <div className="flex items-start justify-between border-b border-[#E6E6E6] px-5 py-4 sm:px-6">
                     <div className="flex items-start gap-3">
                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#FFF1F1] text-[#E74040]">
-                            <AlertTriangle size={22} />
+                            <AlertTriangle
+                                size={22}
+                                aria-hidden="true"
+                            />
                         </div>
 
                         <div>
@@ -98,7 +104,10 @@ function DeleteAddressModal({
                         aria-label="Close delete confirmation"
                         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#737373] transition-colors hover:bg-[#F5F5F5] hover:text-[#252B42] disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <X size={20} />
+                        <X
+                            size={20}
+                            aria-hidden="true"
+                        />
                     </button>
                 </div>
 
@@ -116,20 +125,49 @@ function DeleteAddressModal({
                             {address.title}
                         </p>
 
-                        <p className="mt-2 text-sm text-[#737373]">
-                            {address.name} {address.surname}
-                        </p>
+                        <div className="mt-4 flex items-start gap-2 text-sm text-[#252B42]">
+                            <UserRound
+                                size={16}
+                                aria-hidden="true"
+                                className="mt-0.5 shrink-0 text-[#737373]"
+                            />
 
-                        <p className="mt-1 text-sm leading-6 text-[#737373]">
-                            {address.neighborhood},{" "}
-                            {address.district}/{address.city}
-                        </p>
+                            <span>
+                                {address.name}{" "}
+                                {address.surname}
+                            </span>
+                        </div>
 
-                        {address.address && (
-                            <p className="mt-1 text-sm leading-6 text-[#737373]">
-                                {address.address}
-                            </p>
-                        )}
+                        <div className="mt-2 flex items-start gap-2 text-sm text-[#252B42]">
+                            <Phone
+                                size={16}
+                                aria-hidden="true"
+                                className="mt-0.5 shrink-0 text-[#737373]"
+                            />
+
+                            <span>{address.phone}</span>
+                        </div>
+
+                        <div className="mt-2 flex items-start gap-2 text-sm leading-6 text-[#252B42]">
+                            <MapPin
+                                size={16}
+                                aria-hidden="true"
+                                className="mt-1 shrink-0 text-[#737373]"
+                            />
+
+                            <div className="min-w-0">
+                                <p className="break-words">
+                                    {address.neighborhood}
+                                    {address.address &&
+                                        `, ${address.address}`}
+                                </p>
+
+                                <p className="mt-1 break-words">
+                                    {address.district}/
+                                    {address.city}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

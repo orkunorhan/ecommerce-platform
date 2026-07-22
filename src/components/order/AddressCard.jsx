@@ -56,25 +56,25 @@ function AddressCard({
                     <div className="mt-4 flex items-start gap-2 text-sm text-[#252B42]">
                         <UserRound
                             size={16}
-                            className="mt-0.5 shrink-0 text-[#23A6F0]"
+                            className="mt-0.5 shrink-0 text-[#737373]"
                         />
 
                         <span>{fullName}</span>
                     </div>
 
-                    <div className="mt-2 flex items-start gap-2 text-sm text-[#737373]">
+                    <div className="mt-2 flex items-start gap-2 text-sm text-[#252B42]">
                         <Phone
                             size={16}
-                            className="mt-0.5 shrink-0"
+                            className="mt-0.5 shrink-0 text-[#737373]"
                         />
 
                         <span>{address.phone}</span>
                     </div>
 
-                    <div className="mt-2 flex items-start gap-2 text-sm leading-6 text-[#737373]">
+                    <div className="mt-2 flex items-start gap-2 text-sm leading-6 text-[#252B42]">
                         <MapPin
                             size={16}
-                            className="mt-1 shrink-0"
+                            className="mt-1 shrink-0 text-[#737373]"
                         />
 
                         <div className="min-w-0">

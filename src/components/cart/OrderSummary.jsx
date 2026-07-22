@@ -4,6 +4,10 @@ function OrderSummary({
     discount,
     grandTotal,
     selectedItemCount,
+    buttonText = "Create Order",
+    buttonDisabled = false,
+    onButtonClick,
+    helperText,
 }) {
     const formatPrice = (price) =>
         Number(price).toLocaleString("en-US", {
@@ -68,11 +72,18 @@ function OrderSummary({
 
             <button
                 type="button"
-                disabled
-                className="mt-6 flex h-12 w-full cursor-not-allowed items-center justify-center rounded-md bg-[#23A6F0] px-6 text-sm font-bold text-white opacity-70"
+                onClick={onButtonClick}
+                disabled={buttonDisabled}
+                className="mt-6 flex h-12 w-full items-center justify-center rounded-[5px] bg-[#23A6F0] px-5 text-sm font-bold text-white transition-colors hover:bg-[#1B8ED1] disabled:cursor-not-allowed disabled:bg-[#BDBDBD]"
             >
-                Create Order
+                {buttonText}
             </button>
+
+            {helperText && (
+                <p className="mt-3 text-center text-xs leading-5 text-[#737373]">
+                    {helperText}
+                </p>
+            )}
 
             <p className="mt-3 text-center text-xs leading-5 text-[#737373]">
                 Order creation will be enabled in a later task.
