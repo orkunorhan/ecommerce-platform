@@ -161,7 +161,7 @@ function AddressForm({
                     type="tel"
                     inputMode="numeric"
                     maxLength={11}
-                    placeholder="05XXXXXXXXX"
+                    placeholder="0xxx xxx xx xx"
                     {...register("phone", {
                         required: "Phone number is required.",
                         pattern: {
