@@ -11,7 +11,11 @@ import {
 
 const initialState = {
   cart: [],
-  payment: {},
+  payment: {
+    selectedCard: null,
+    installment: null,
+    use3DSecure: false,
+  },
   address: {
     shippingAddress: null,
     billingAddress: null,

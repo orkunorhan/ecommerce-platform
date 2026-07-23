@@ -11,6 +11,7 @@ import {
     deleteAddress,
     updateAddress,
 } from "../../store/actions/clientActions";
+
 import AddressList from "./AddressList";
 import AddressModal from "./AddressModal";
 import DeleteAddressModal from "./DeleteAddressModal";
@@ -20,6 +21,7 @@ function AddressSection({
     addressFetchState,
     addressError,
     checkoutAddress,
+    showSelectionWarning,
     onShippingAddressSelect,
     onBillingAddressSelect,
     onSameAddressChange,
@@ -28,23 +30,29 @@ function AddressSection({
 }) {
     const dispatch = useDispatch();
 
-    const [modalMode, setModalMode] = useState(null);
-    const [editingAddress, setEditingAddress] =
+    const [modalMode, setModalMode] =
         useState(null);
+
+    const [
+        editingAddress,
+        setEditingAddress,
+    ] = useState(null);
+
     const [isSubmitting, setIsSubmitting] =
         useState(false);
-    const [deletingAddressId, setDeletingAddressId] =
-        useState(null);
+
+    const [
+        deletingAddressId,
+        setDeletingAddressId,
+    ] = useState(null);
+
     const [
         addressPendingDeletion,
         setAddressPendingDeletion,
     ] = useState(null);
 
-    const {
-        shippingAddress,
-        billingAddress,
-        sameAddress,
-    } = checkoutAddress;
+    const sameAddress =
+        checkoutAddress.sameAddress;
 
     const isLoading =
         addressFetchState === "idle" ||
@@ -69,7 +77,20 @@ function AddressSection({
         setEditingAddress(null);
     };
 
-    const handleAddressSubmit = async (formData) => {
+    const handleAddressSubmit = async (
+        formData,
+    ) => {
+        if (
+            modalMode === "edit" &&
+            !editingAddress
+        ) {
+            toast.error(
+                "The address to update could not be found.",
+            );
+
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -96,7 +117,10 @@ function AddressSection({
                 );
             }
 
-            onAddressSaved(savedAddress, modalMode);
+            onAddressSaved?.(
+                savedAddress,
+                modalMode,
+            );
 
             setModalMode(null);
             setEditingAddress(null);
@@ -132,14 +156,14 @@ function AddressSection({
         const addressId =
             addressPendingDeletion.id;
 
-        setDeletingAddressId(addressId);
-
         try {
+            setDeletingAddressId(addressId);
+
             await dispatch(
                 deleteAddress(addressId),
             );
 
-            onAddressDeleted(addressId);
+            onAddressDeleted?.(addressId);
 
             toast.success(
                 "Address deleted successfully.",
@@ -158,27 +182,23 @@ function AddressSection({
         }
     };
 
-    const addressListProps = {
-        addresses: addressList,
-        deletingAddressId,
-        onEdit: openEditModal,
-        onDelete: openDeleteModal,
-    };
-
     return (
         <div className="space-y-6">
-            <div className="flex items-start gap-3 rounded-lg border border-[#BDE3FA] bg-[#F0F9FF] p-4 text-sm leading-6 text-[#252B42]">
-                <Info
-                    size={20}
-                    aria-hidden="true"
-                    className="mt-0.5 shrink-0 text-[#23A6F0]"
-                />
+            {showSelectionWarning && (
+                <div className="flex items-center gap-3 rounded-lg border border-[#BDE3FA] bg-[#EAF6FD] px-4 py-4 text-sm text-[#252B42]">
+                    <Info
+                        size={20}
+                        aria-hidden="true"
+                        className="shrink-0 text-[#23A6F0]"
+                    />
 
-                <p>
-                    Select your shipping and billing addresses
-                    before continuing to payment.
-                </p>
-            </div>
+                    <p>
+                        Select your shipping and
+                        billing addresses before
+                        continuing to payment.
+                    </p>
+                </div>
+            )}
 
             <section className="rounded-lg border border-[#E6E6E6] bg-white p-5 shadow-sm sm:p-6">
                 <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -191,15 +211,16 @@ function AddressSection({
                             type="checkbox"
                             checked={sameAddress}
                             onChange={(event) =>
-                                onSameAddressChange(
+                                onSameAddressChange?.(
                                     event.target.checked,
                                 )
                             }
-                            className="h-5 w-5 cursor-pointer rounded border border-[#BDBDBD] accent-[#1c9be4]"
+                            className="h-5 w-5 cursor-pointer rounded border border-[#BDBDBD] accent-[#1C9BE4]"
                         />
 
                         <span>
-                            Use the same address for billing
+                            Use the same address for
+                            billing
                         </span>
                     </label>
                 </div>
@@ -211,31 +232,45 @@ function AddressSection({
                             className="h-5 w-5 animate-spin"
                         />
 
-                        Loading saved addresses...
+                        <span>
+                            Loading saved addresses...
+                        </span>
                     </div>
                 )}
 
-                {addressFetchState === "failed" && (
-                    <p
-                        role="alert"
-                        className="rounded-md bg-[#FFF1F1] px-4 py-3 text-sm text-[#E74040]"
-                    >
-                        {addressError}
-                    </p>
-                )}
+                {addressFetchState ===
+                    "failed" && (
+                        <p
+                            role="alert"
+                            className="rounded-md border border-[#F5C2C2] bg-[#FFF1F1] px-4 py-3 text-sm text-[#E74040]"
+                        >
+                            {addressError ||
+                                "Saved addresses could not be loaded."}
+                        </p>
+                    )}
 
-                {addressFetchState === "fetched" && (
-                    <AddressList
-                        {...addressListProps}
-                        showAddCard
-                        onAdd={openCreateModal}
-                        selectedAddress={shippingAddress}
-                        onSelect={
-                            onShippingAddressSelect
-                        }
-                        radioGroupName="shipping-address"
-                    />
-                )}
+                {addressFetchState ===
+                    "fetched" && (
+                        <AddressList
+                            addresses={addressList}
+                            selectedAddress={
+                                checkoutAddress.shippingAddress
+                            }
+                            deletingAddressId={
+                                deletingAddressId
+                            }
+                            showAddAddress={true}
+                            onAdd={openCreateModal}
+                            onSelect={
+                                onShippingAddressSelect
+                            }
+                            onEdit={openEditModal}
+                            onDelete={
+                                openDeleteModal
+                            }
+                            radioGroupName="shipping-address"
+                        />
+                    )}
             </section>
 
             {!sameAddress && (
@@ -251,30 +286,40 @@ function AddressSection({
                                 className="h-5 w-5 animate-spin"
                             />
 
-                            Loading saved addresses...
+                            <span>
+                                Loading saved
+                                addresses...
+                            </span>
                         </div>
                     )}
 
-                    {addressFetchState === "failed" && (
-                        <p
-                            role="alert"
-                            className="rounded-md bg-[#FFF1F1] px-4 py-3 text-sm text-[#E74040]"
-                        >
-                            {addressError}
-                        </p>
-                    )}
+                    {addressFetchState ===
+                        "failed" && (
+                            <p
+                                role="alert"
+                                className="rounded-md border border-[#F5C2C2] bg-[#FFF1F1] px-4 py-3 text-sm text-[#E74040]"
+                            >
+                                {addressError ||
+                                    "Saved addresses could not be loaded."}
+                            </p>
+                        )}
 
-                    {addressFetchState === "fetched" &&
-                        addressList.length === 0 && (
+                    {addressFetchState ===
+                        "fetched" &&
+                        addressList.length ===
+                        0 && (
                             <div className="rounded-lg border border-dashed border-[#E6E6E6] px-5 py-10 text-center">
                                 <p className="text-sm text-[#737373]">
-                                    Add an address before
-                                    selecting a billing address.
+                                    Add an address
+                                    before selecting a
+                                    billing address.
                                 </p>
 
                                 <button
                                     type="button"
-                                    onClick={openCreateModal}
+                                    onClick={
+                                        openCreateModal
+                                    }
                                     className="mt-4 text-sm font-bold text-[#23A6F0] hover:underline"
                                 >
                                     Add New Address
@@ -282,15 +327,31 @@ function AddressSection({
                             </div>
                         )}
 
-                    {addressFetchState === "fetched" &&
-                        addressList.length > 0 && (
+                    {addressFetchState ===
+                        "fetched" &&
+                        addressList.length >
+                        0 && (
                             <AddressList
-                                {...addressListProps}
+                                addresses={
+                                    addressList
+                                }
                                 selectedAddress={
-                                    billingAddress
+                                    checkoutAddress.billingAddress
+                                }
+                                deletingAddressId={
+                                    deletingAddressId
+                                }
+                                showAddAddress={
+                                    false
                                 }
                                 onSelect={
                                     onBillingAddressSelect
+                                }
+                                onEdit={
+                                    openEditModal
+                                }
+                                onDelete={
+                                    openDeleteModal
                                 }
                                 radioGroupName="billing-address"
                             />
@@ -308,10 +369,18 @@ function AddressSection({
             />
 
             <DeleteAddressModal
-                isOpen={Boolean(addressPendingDeletion)}
-                address={addressPendingDeletion}
-                isDeleting={deletingAddressId !== null}
-                onConfirm={handleAddressDelete}
+                isOpen={Boolean(
+                    addressPendingDeletion,
+                )}
+                address={
+                    addressPendingDeletion
+                }
+                isDeleting={
+                    deletingAddressId !== null
+                }
+                onConfirm={
+                    handleAddressDelete
+                }
                 onClose={closeDeleteModal}
             />
         </div>

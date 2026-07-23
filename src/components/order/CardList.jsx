@@ -1,11 +1,11 @@
-import AddressCard from "./AddressCard";
+import CardCard from "./CardCard";
 import SelectionGrid from "./SelectionGrid";
 
-function AddressList({
-    addresses,
-    selectedAddress,
-    deletingAddressId,
-    showAddAddress = false,
+function CardList({
+    cards,
+    selectedCard,
+    deletingCardId,
+    showAddCard = false,
     onAdd,
     onSelect,
     onEdit,
@@ -14,24 +14,24 @@ function AddressList({
 }) {
     return (
         <SelectionGrid
-            showAddItem={showAddAddress}
-            addItemText="Add New Address"
+            showAddItem={showAddCard}
+            addItemText="Add New Card"
             onAddItem={onAdd}
         >
-            {addresses.map((address) => (
+            {cards.map((card) => (
                 <div
-                    key={address.id}
+                    key={card.id}
                     className="h-full"
                 >
-                    <AddressCard
-                        address={address}
+                    <CardCard
+                        card={card}
                         selected={
-                            selectedAddress?.id ===
-                            address.id
+                            selectedCard?.id ===
+                            card.id
                         }
                         isDeleting={
-                            deletingAddressId ===
-                            address.id
+                            deletingCardId ===
+                            card.id
                         }
                         onSelect={onSelect}
                         onEdit={onEdit}
@@ -44,4 +44,4 @@ function AddressList({
     );
 }
 
-export default AddressList;
+export default CardList;

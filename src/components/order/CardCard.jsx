@@ -1,13 +1,13 @@
 import {
-    MapPin,
+    CalendarDays,
+    CreditCard,
     Pencil,
-    Phone,
     Trash2,
     UserRound,
 } from "lucide-react";
 
-function AddressCard({
-    address,
+function CardCard({
+    card,
     selected,
     isDeleting,
     onSelect,
@@ -15,26 +15,12 @@ function AddressCard({
     onDelete,
     name,
 }) {
-    const fullName = [
-        address.name,
-        address.surname,
-    ]
-        .filter(Boolean)
-        .join(" ");
+    const cardNumber = String(
+        card.card_no ?? "",
+    );
 
-    const addressDetail = [
-        address.neighborhood,
-        address.address,
-    ]
-        .filter(Boolean)
-        .join(", ");
-
-    const cityDetail = [
-        address.district,
-        address.city,
-    ]
-        .filter(Boolean)
-        .join("/");
+    const lastFourDigits =
+        cardNumber.slice(-4);
 
     const handleKeyDown = (event) => {
         if (
@@ -42,7 +28,7 @@ function AddressCard({
             event.key === " "
         ) {
             event.preventDefault();
-            onSelect(address);
+            onSelect(card);
         }
     };
 
@@ -59,9 +45,9 @@ function AddressCard({
                     name={name}
                     checked={selected}
                     onChange={() =>
-                        onSelect(address)
+                        onSelect(card)
                     }
-                    aria-label={`Select ${address.title} address`}
+                    aria-label={`Select card ending ${lastFourDigits}`}
                     className="mt-1 h-4 w-4 shrink-0 cursor-pointer accent-[#1C9BE4]"
                 />
 
@@ -69,14 +55,23 @@ function AddressCard({
                     role="button"
                     tabIndex={0}
                     onClick={() =>
-                        onSelect(address)
+                        onSelect(card)
                     }
                     onKeyDown={handleKeyDown}
                     className="min-w-0 flex-1 cursor-pointer"
                 >
-                    <h3 className="truncate font-bold text-[#252B42]">
-                        {address.title}
-                    </h3>
+                    <div className="flex items-center gap-2">
+                        <CreditCard
+                            size={18}
+                            aria-hidden="true"
+                            className="shrink-0 text-[#737373]"
+                        />
+
+                        <h3 className="truncate font-bold text-[#252B42]">
+                            **** **** ****{" "}
+                            {lastFourDigits}
+                        </h3>
+                    </div>
 
                     <div className="mt-5 space-y-2">
                         <div className="flex items-start gap-2">
@@ -86,43 +81,23 @@ function AddressCard({
                                 className="mt-0.5 shrink-0 text-[#737373]"
                             />
 
-                            <p className="min-w-0 break-words text-sm leading-5 text-[#252B42]">
-                                {fullName}
+                            <p className="min-w-0 truncate text-sm leading-5 text-[#252B42]">
+                                {card.name_on_card}
                             </p>
                         </div>
 
                         <div className="flex items-start gap-2">
-                            <Phone
+                            <CalendarDays
                                 size={17}
                                 aria-hidden="true"
                                 className="mt-0.5 shrink-0 text-[#737373]"
                             />
 
-                            <p className="min-w-0 break-words text-sm leading-5 text-[#252B42]">
-                                {address.phone}
+                            <p className="text-sm leading-5 text-[#252B42]">
+                                Expires{" "}
+                                {card.expire_month}/
+                                {card.expire_year}
                             </p>
-                        </div>
-
-                        <div className="flex items-start gap-2">
-                            <MapPin
-                                size={17}
-                                aria-hidden="true"
-                                className="mt-0.5 shrink-0 text-[#737373]"
-                            />
-
-                            <div className="min-w-0">
-                                {addressDetail && (
-                                    <p className="break-words text-sm leading-5 text-[#252B42]">
-                                        {addressDetail}
-                                    </p>
-                                )}
-
-                                {cityDetail && (
-                                    <p className="mt-2 break-words text-sm leading-5 text-[#252B42]">
-                                        {cityDetail}
-                                    </p>
-                                )}
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -131,10 +106,10 @@ function AddressCard({
                     <button
                         type="button"
                         onClick={() =>
-                            onEdit(address)
+                            onEdit(card)
                         }
                         disabled={isDeleting}
-                        aria-label={`Edit ${address.title} address`}
+                        aria-label={`Edit card ending ${lastFourDigits}`}
                         className="flex h-9 w-9 items-center justify-center rounded-full text-[#23A6F0] transition-colors hover:bg-[#EAF6FD] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <Pencil
@@ -146,10 +121,10 @@ function AddressCard({
                     <button
                         type="button"
                         onClick={() =>
-                            onDelete(address)
+                            onDelete(card)
                         }
                         disabled={isDeleting}
-                        aria-label={`Delete ${address.title} address`}
+                        aria-label={`Delete card ending ${lastFourDigits}`}
                         className="flex h-9 w-9 items-center justify-center rounded-full text-[#E74040] transition-colors hover:bg-[#FFF1F1] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <Trash2
@@ -165,11 +140,11 @@ function AddressCard({
                     role="status"
                     className="mt-4 text-xs font-semibold text-[#737373]"
                 >
-                    Deleting address...
+                    Deleting card...
                 </p>
             )}
         </article>
     );
 }
 
-export default AddressCard;
+export default CardCard;
